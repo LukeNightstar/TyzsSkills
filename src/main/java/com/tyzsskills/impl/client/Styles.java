@@ -3,6 +3,8 @@ package com.tyzsskills.impl.client;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.resources.ResourceLocation;
 
 public class Styles {
@@ -11,6 +13,13 @@ public class Styles {
     public static final int COLOR_BG = 0xD5000000;
     public static final int COLOR_BORDER_MAXED = 0xFFA38441;
     public static final int COLOR_BORDER = 0xFFFFFFFF;
+
+    public static final int TOOLTIP_BACKGROUND = 0xFF000000;
+    public static final int TOOLTIP_BORDER = 0xFFFFFFFF;
+
+    //MISC
+    public static final Font FONT = Minecraft.getInstance().font;
+    public static final int TEXT_HEIGHT = 9;
 
     //Styles
     public static final UITexture MAIN_TEXTURE =
@@ -25,6 +34,9 @@ public class Styles {
 
     public static final UIStyles.BackgroundStyle DEFAULT_BACKGROUND =
             new UIStyles.BackgroundStyle(COLOR_BG, COLOR_BORDER, 4, 4);
+
+    public static final UIStyles.BackgroundStyle TOOLTIP =
+            new UIStyles.BackgroundStyle(TOOLTIP_BACKGROUND, TOOLTIP_BORDER, 3, 3);
 
 
 }

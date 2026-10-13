@@ -27,8 +27,8 @@ public class UIText extends UIElement {
     public UIText withBackground(Supplier<UIStyles.BackgroundStyle> backgroundStyle, Supplier<Boolean> showBackgroundBorder) {
         this.backgroundStyle = backgroundStyle; this.showBackgroundBorder = showBackgroundBorder; return this;}
 
-    public UIText(int offsetX, int offsetY, int width, int height, Supplier<MutableComponent> textExtractor) {
-        super(offsetX, offsetY, width, height);
+    public UIText(int offsetX, int offsetY, Supplier<MutableComponent> textExtractor) {
+        super(offsetX, offsetY, 0, 0);
         this.textExtractor = textExtractor;
     }
 
@@ -73,13 +73,12 @@ public class UIText extends UIElement {
         var rawX = getRawX();
         var rawW = getRawWidth();
 
-        if (scalePivot == Enums.ScalePivot.CENTER) return rawX + (rawW / 2f);
+        if (wrapWidth > 0) return scalePivot == Enums.ScalePivot.CENTER ? rawX + (rawW / 2f) : super.getRawX();
 
-        if (wrapWidth > 0) return rawX;
         return switch (alignment) {
-            case RIGHT -> rawX + rawW;
+            case RIGHT -> getTextRawX() + getTextRawWidth();
             case CENTER -> rawX + (rawW / 2f);
-            case LEFT -> rawX;
+            case LEFT -> scalePivot == Enums.ScalePivot.CENTER ? rawX + (rawW / 2f) : super.getRawX();
         };
     }
     @Override

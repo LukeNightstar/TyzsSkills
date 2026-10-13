@@ -6,6 +6,8 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.models.SkillPanel;
+import com.tyzsskills.impl.client.tooltips.XpTooltip;
+import com.tyzsskills.integration.ui.UITooltipRenderer;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,9 +44,9 @@ public class MainMenu extends Screen {
         super(Component.translatable("gui.tyzs_skills.title"));
         cache = ClientCache.get();
 
-        mainPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
+        mainPanel = new UIContainer(0, 0);
 
-        skillPanel = new SkillPanel(0, 0, WIDTH, HEIGHT);
+        skillPanel = new SkillPanel(0, 0);
         skillPanel.withVisibility(() -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SKILL);
     }
 
@@ -79,20 +81,22 @@ public class MainMenu extends Screen {
         mainPanel.addChild(new UIEntity(8, 14, 40, 70, () -> this.minecraft.player, 39));
 
         //Progress Bar
+        var xpTooltip = new XpTooltip();
         mainPanel.addChild(new UIProgressBar(2, 105, () -> XP_BAR, () -> cache.getXp()/cache.getXpGoal())
-                .withTooltip(() -> Component.literal(cache.getXp() + "/" + FormatTools.defaultFloat(cache.getXpGoal()))));
+                .withTooltip(() -> xpTooltip));
+
 
         //Texts
         var textScale = .63f;
-        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.Lvl"))
+        mainPanel.addChild(new UIText(4, 96 , () -> Component.translatable("gui.tyzs_skills.Lvl"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.literal(FormatTools.bigFloat(cache.getLevel())))
+        mainPanel.addChild(new UIText(30, 96, () -> Component.literal(FormatTools.bigFloat(cache.getLevel())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
-        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.SP"))
+        mainPanel.addChild(new UIText(37, 96, () -> Component.translatable("gui.tyzs_skills.SP"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(FormatTools.bigFloat(cache.getSp())))
+        mainPanel.addChild(new UIText(63, 96, () -> Component.literal(FormatTools.bigFloat(cache.getSp())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
     }
@@ -104,7 +108,9 @@ public class MainMenu extends Screen {
         super.renderBackground(gui, mouseX, mouseY, partialTick);
 
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
-        mainPanel.drawTooltips(gui, font, mouseX, mouseY);
+
+        var activeTooltip = mainPanel.resolveTooltip(mouseX, mouseY);
+        if(activeTooltip != null) UITooltipRenderer.render(gui, activeTooltip, mouseX, mouseY, width, height, Styles.TOOLTIP);
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){

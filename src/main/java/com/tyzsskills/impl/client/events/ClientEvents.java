@@ -13,32 +13,32 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTooltipColor(RenderTooltipEvent.Color event) {
 
-        if (Minecraft.getInstance().screen instanceof MainMenu) {
-
-        for(var component : event.getComponents()){
-            if(component instanceof SkillTooltip tooltip){
-                event.setBackground(0xFF000000);
-
-                var skill = tooltip.getSkill();
-                boolean isMaxed = ClientCache.get().getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
-
-                int borderStartColor = isMaxed ? 0xFFD6AD55 : 0xFFD6D6D6;
-                int borderEndColor = isMaxed ? 0xFF8B6B25 : 0xFF8B8B8B;
-
-                event.setBorderStart(borderStartColor);
-                event.setBorderEnd(borderEndColor);
-
-                break;
-            }
-            else{
-                event.setBackground(0xFF000000);
-                event.setBorderStart(0xFFD6D6D6);
-                event.setBorderEnd(0xFF8B8B8B);
-                break;
-            }
-
-        }
-
-        }
-    }
+//        if (Minecraft.getInstance().screen instanceof MainMenu) {
+//
+//        for(var component : event.getComponents()){
+//            if(component instanceof SkillTooltip tooltip){
+//                event.setBackground(0xFF000000);
+//
+//                var skill = tooltip.getSkill();
+//                boolean isMaxed = ClientCache.get().getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
+//
+//                int borderStartColor = isMaxed ? 0xFFD6AD55 : 0xFFD6D6D6;
+//                int borderEndColor = isMaxed ? 0xFF8B6B25 : 0xFF8B8B8B;
+//
+//                event.setBorderStart(borderStartColor);
+//                event.setBorderEnd(borderEndColor);
+//
+//                break;
+//            }
+//            else{
+//                event.setBackground(0xFF000000);
+//                event.setBorderStart(0xFFD6D6D6);
+//                event.setBorderEnd(0xFF8B8B8B);
+//                break;
+//            }
+//
+//        }
+//
+//        }
+   }
 }

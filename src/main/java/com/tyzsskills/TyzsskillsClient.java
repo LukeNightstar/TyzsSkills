@@ -10,10 +10,6 @@ import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
-import com.tyzsskills.impl.client.tooltips.SkillTooltip;
-import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.screen.*;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
@@ -113,12 +109,6 @@ public class TyzsskillsClient {
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
                 ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
                 new LevelTriggerOverlay());
-    }
-
-    @SubscribeEvent
-    public static void registerCustomTooltip(RegisterClientTooltipComponentFactoriesEvent event){
-        event.register(SkillTooltipData.class, SkillTooltip::new);
-        event.register(CategoryTooltipData.class, CategoryTooltip::new);
     }
 
     @SubscribeEvent

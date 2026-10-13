@@ -1,10 +1,8 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.mojang.datafixers.util.Either;
 import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +10,24 @@ import java.util.List;
 public class UIContainer extends UIElement {
     protected final List<UIElement> children = new ArrayList<>();
 
-    public UIContainer(int offsetX, int offsetY, int width, int height) {super(offsetX, offsetY, width, height);}
+    public UIContainer(int offsetX, int offsetY) {
+        super(offsetX, offsetY, 0, 0);
+    }
+
+    public UIContainer(int offsetX, int offsetY, int width, int height) {
+        super(offsetX, offsetY, width, height);
+    }
+
 
     //Fluents
-    public UIElement addChild(UIElement child){children.add(child); return this;}
+    public UIContainer addChild(UIElement child) {
+        children.add(child);
+        return this;
+    }
 
     //Overrides
     @Override
-    protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         for(var child : children){
             child.updatePosition(getRawX(), getRawY());
             child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded());
@@ -60,14 +68,19 @@ public class UIContainer extends UIElement {
         return false;
     }
 
-    @Override
-    protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
+    public UIContainer resolveTooltip(int mouseX, int mouseY) {
+        if (!isVisible() || !isHovering(mouseX, mouseY)) return null;
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);
-            var childTooltip = child.getTooltips(mouseX, mouseY);
-            if (!childTooltip.isEmpty()) return childTooltip;
+            if (child instanceof UIContainer containerChild) {
+                var tooltip = containerChild.resolveTooltip(mouseX, mouseY);
+                if (tooltip != null) return tooltip;
+            } else {
+                var tooltip = child.getHoveredTooltip(mouseX, mouseY);
+                if (tooltip != null) return tooltip;
+            }
         }
-        return super.resolveTooltips(mouseX, mouseY);
+        return this.getHoveredTooltip(mouseX, mouseY);
     }
 
     @Override
@@ -93,8 +106,8 @@ public class UIContainer extends UIElement {
         updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
 
         var minX = Float.MAX_VALUE;
-        var maxX = Float.MIN_VALUE;
-        boolean hasVisibleChild = false;
+        var maxX = -Float.MAX_VALUE;
+        var hasVisibleChild = false;
 
         for (var child : children) {
             if (!child.isVisible()) continue;
@@ -104,15 +117,16 @@ public class UIContainer extends UIElement {
             minX = Math.min(minX, cx);
             maxX = Math.max(maxX, cx + cw);
         }
-        return hasVisibleChild ? Math.round(maxX - Math.min(getRawX(), minX)) : 0;
+        return hasVisibleChild ? Math.round(maxX - minX) : 0;
     }
+
     @Override
     public int getRawHeight() {
         if (super.getRawHeight() > 0) return super.getRawHeight();
         updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
 
         var minY = Float.MAX_VALUE;
-        var maxY = Float.MIN_VALUE;
+        var maxY = -Float.MAX_VALUE;
         var hasVisibleChild = false;
 
         for (var child : children) {
@@ -123,10 +137,41 @@ public class UIContainer extends UIElement {
             minY = Math.min(minY, cy);
             maxY = Math.max(maxY, cy + ch);
         }
-        return hasVisibleChild ? Math.round(maxY - Math.min(getRawY(), minY)) : 0;
+        return hasVisibleChild ? Math.round(maxY - minY) : 0;
+    }
+
+    @Override
+    public float getVisualX() {
+        if (super.getRawWidth() > 0) return super.getVisualX();
+        updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
+
+        var minX = Float.MAX_VALUE;
+        var hasVisibleChild = false;
+        for (var child : children) {
+            if (!child.isVisible()) continue;
+            hasVisibleChild = true;
+            minX = Math.min(minX, child.getVisualX());
+        }
+        return hasVisibleChild ? minX : super.getVisualX();
+    }
+
+    @Override
+    public float getVisualY() {
+        if (super.getRawHeight() > 0) return super.getVisualY();
+        updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
+
+        var minY = Float.MAX_VALUE;
+        var hasVisibleChild = false;
+        for (var child : children) {
+            if (!child.isVisible()) continue;
+            hasVisibleChild = true;
+            minY = Math.min(minY, child.getVisualY());
+        }
+        return hasVisibleChild ? minY : super.getVisualY();
     }
 
     public void clear(){
         children.clear();
     }
+
 }

@@ -1,57 +1,25 @@
 package com.tyzsskills.impl.client.tooltips;
 
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+
+import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.records.Category;
+import com.tyzsskills.impl.client.Styles;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIText;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
-public class CategoryTooltip implements ClientTooltipComponent {
+public class CategoryTooltip extends UIContainer {
+    public CategoryTooltip(Category category) {
+        super(0, 0);
 
-    private static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
+        var parsedIcon = ResourceLocation.tryParse(category.icon());
+        var icon = parsedIcon == null ? Styles.DEFAULT_SKILL_ICON.texture() : parsedIcon;
+        var displayName = Component.translatable(category.displayName());
 
-    private final ResourceLocation icon;
-    private final Component displayName;
-
-    private final float iconScale = .8f;
-    private final int scaledSize = Math.round(16 * iconScale);
-
-    public CategoryTooltip(@NotNull CategoryTooltipData data){
-        var parsedIcon = ResourceLocation.tryParse(data.category().icon());
-        this.icon = parsedIcon == null ? DEFAULT_ICON : parsedIcon;
-
-        this.displayName = Component.translatable(data.category().displayName());
+        addChild(new UIImage(0, 0, 16, 16, icon, 16).withScale(.75f, Enums.ScalePivot.CENTER));
+        addChild(new UIText(13,  4, () -> displayName).withScale(.75f, Enums.ScalePivot.CENTER));
     }
-
-    @Override
-    public int getHeight() {
-        return Math.max(scaledSize, 9);
-    }
-
-    @Override
-    public int getWidth(Font font) {
-        return scaledSize + 4 + font.width(this.displayName);
-    }
-
-    @Override
-    public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
-        var iconOffsetY = -1;
-        var textOffsetY = 2;
-
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(x, y + iconOffsetY, 0);
-        guiGraphics.pose().scale(iconScale, iconScale, 1.0f);
-        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1f);
-
-        guiGraphics.blit(this.icon, 0, 0, 0, 0, 16, 16, 16, 16);
-        guiGraphics.pose().popPose();
-
-
-        var textX = x + scaledSize + 4;
-        var textY = y + textOffsetY;
-
-        guiGraphics.drawString(font, this.displayName, textX, textY, 0xFFFFFF, true);
-    }
-
 }

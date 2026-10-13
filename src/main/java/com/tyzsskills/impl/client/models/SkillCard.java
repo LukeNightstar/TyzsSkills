@@ -6,7 +6,6 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
-import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
@@ -89,7 +88,7 @@ public class SkillCard extends UIContainer {
     }
 
     @Override
-    protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         updateData();
         super.render(gui, mouseX, mouseY, partialTick);
     }
@@ -98,21 +97,21 @@ public class SkillCard extends UIContainer {
     private void initElements(){
         //BACKGROUND & ICON
         this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
-        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation).withCustomTooltip(() -> new SkillTooltipData(this.skill)));
+        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation));//.withCustomTooltip(() -> new SkillTooltipData(this.skill)));
         this.addChild(new UIImage(7, 7, 16, 16, this.icon, 16).withScale(.95f, Enums.ScalePivot.CENTER));
 
         //BADGE
         var textScale = .57f;
-        this.addChild(new UIText(30, 10, 30, 10, this::getSkillLevelText)
+        this.addChild(new UIText(29, 10, this::getSkillLevelText)
                 .withWrapWidth((int)(30 / textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> LEVEL_BACKGROUND, () -> isMaxed)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         //BUTTONS
         this.addChild(new UIButton(38, 17, () -> isShiftPressed() ? BULK_PURCHASE_BTN : PURCHASE_BTN, this::handlePurchase)
-                        .withDisabled(this::isPurchaseDisabled).withTooltipLines(this::getPurchaseTooltip));
+                        .withDisabled(this::isPurchaseDisabled));//.withTooltipLines(this::getPurchaseTooltip));
 
         this.addChild(new UIButton(27, 17, () -> isShiftPressed() ? BULK_REFUND_BTN : REFUND_BTN, this::handleRefund)
-                .withDisabled(this::isRefundDisabled).withTooltipLines(this::getRefundTooltip));
+                .withDisabled(this::isRefundDisabled));//.withTooltipLines(this::getRefundTooltip));
 
         this.addChild(new UIButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
     }

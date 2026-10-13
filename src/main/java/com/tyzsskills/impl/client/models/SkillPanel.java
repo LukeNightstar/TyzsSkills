@@ -6,8 +6,7 @@ import com.tyzsskills.api.records.Category;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.Styles;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
-import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.network.chat.Component;
@@ -39,18 +38,18 @@ public class SkillPanel extends UIContainer {
     //endregion
 
     //PARENTS
-    public SkillPanel(int offsetX, int offsetY, int width, int height) {
-        super(offsetX, offsetY, width, height);
+    public SkillPanel(int offsetX, int offsetY) {
+        super(offsetX, offsetY);
 
         cache = ClientCache.get();
 
-        tabsPanel = new UIContainer(0, 0, width, height);
+        tabsPanel = new UIContainer(0, 0);
         scrollView = new UIScrollView(98, 25, 214, 108);
 
         //TO SEE SCROLL VIEW SHAPE =>scrollView.addChild(new UIBackground(0, 0, 214, 150, 0xFFD6AD55));
 
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
-        this.addChild(new UIText(254, 10, 53, 18, () -> categoryDisplayName)
+        this.addChild(new UIText(307, 10, () -> categoryDisplayName)
                 .withAlignment(Enums.TextAlignment.RIGHT).withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 
@@ -94,7 +93,7 @@ public class SkillPanel extends UIContainer {
 
             tabsPanel.addChild(new UITabButton(x, y, 29, 20, () -> handleCategoryChange(category), icon)
                     .withStyle(() -> SortingManager.getCurrentCategory() == category ? TAB_BTN_SELECTED : TAB_BTN_UNSELECTED)
-                    .withCustomTooltip(() -> new CategoryTooltipData(category)));
+                    .withTooltip(() -> new CategoryTooltip(category)));
             x += 28;
         }
 

@@ -45,10 +45,8 @@ public class AdrenalineEffect extends SkillBehavior {
         if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, durationInTick, 2));
             player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, durationInTick, 0));
-            if(skill.hasTag(TagRegistry.CONSUMABLE)) TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill.getID(), 1);
+            TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill.getID(), 1);
             notifyClient(player, skill);
         }
     }
-
-
 }

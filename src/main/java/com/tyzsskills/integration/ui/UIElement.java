@@ -2,6 +2,7 @@ package com.tyzsskills.integration.ui;
 
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.integration.ui.models.UIContainer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
@@ -21,9 +22,9 @@ public abstract class UIElement {
     private boolean currentShaded = false;
     protected boolean isCurrentShaded(){return currentShaded;}
 
+    protected Supplier<UIContainer> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
     protected Supplier<Boolean> shadedWhen = () -> false;
-    protected Supplier<List<Either<FormattedText, TooltipComponent>>> tooltip = () -> EMPTY_TOOLTIP;
 
     public UIElement(int offsetX, int offsetY, int width, int height){
         this.offsetX = offsetX;
@@ -37,33 +38,8 @@ public abstract class UIElement {
     public UIElement withVisibility(Supplier<Boolean> supplier) {this.visibleWhen = supplier; return this;}
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
+    public UIElement withTooltip(Supplier<UIContainer> supplier){tooltip = supplier; return this;}
 
-    //Tooltips
-    private UIElement withRawTooltip(Supplier<List<Either<FormattedText, TooltipComponent>>> supplier) {
-        this.tooltip = supplier != null ? supplier : () -> EMPTY_TOOLTIP;
-        return this;
-    }
-    public UIElement withTooltip(Supplier<? extends FormattedText> supplier) {
-        return this.withRawTooltip(() -> {
-            FormattedText text = supplier.get();
-            if (text == null) return EMPTY_TOOLTIP;
-            return List.of(Either.left(text));
-        });
-    }
-    public UIElement withTooltipLines(Supplier<? extends List<? extends FormattedText>> supplier) {
-        return this.withRawTooltip(() -> {
-            var lines = supplier.get();
-            if (lines == null || lines.isEmpty()) return EMPTY_TOOLTIP;
-            return lines.stream().<Either<FormattedText, TooltipComponent>>map(Either::left).toList();
-        });
-    }
-    public UIElement withCustomTooltip(Supplier<? extends TooltipComponent> supplier) {
-        return this.withRawTooltip(() -> {
-            TooltipComponent data = supplier.get();
-            if (data == null) return EMPTY_TOOLTIP;
-            return List.of(Either.right(data));
-        });
-    }
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
@@ -80,13 +56,6 @@ public abstract class UIElement {
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
         draw(gui, mouseX, mouseY, partialTick, true, false);
-    }
-
-    public void drawTooltips(GuiGraphics gui, Font font, int mouseX, int mouseY) {
-        var tooltips = getTooltips(mouseX, mouseY);
-        if (tooltips.isEmpty()) return;
-
-        gui.renderComponentTooltipFromElements(font, tooltips, mouseX, mouseY, ItemStack.EMPTY);
     }
 
     //Clicks
@@ -142,18 +111,9 @@ public abstract class UIElement {
     }
 
     //Tooltips
-    protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
-        return tooltip.get();
-    }
-
-    public final List<Either<FormattedText, TooltipComponent>> getTooltips(int mouseX, int mouseY, boolean inheritedVisible) {
-        boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible || !isHovering(mouseX, mouseY)) return EMPTY_TOOLTIP;
-        return resolveTooltips(mouseX, mouseY);
-    }
-
-    public final List<Either<FormattedText, TooltipComponent>> getTooltips(int mouseX, int mouseY) {
-        return getTooltips(mouseX, mouseY, true);
+    public UIContainer getHoveredTooltip(int mouseX, int mouseY) {
+        if (visibleWhen.get() && isHovering(mouseX, mouseY)) return tooltip.get();
+        return null;
     }
 
 

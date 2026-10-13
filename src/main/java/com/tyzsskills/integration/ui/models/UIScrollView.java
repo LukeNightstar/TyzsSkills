@@ -28,7 +28,7 @@ public class UIScrollView extends UIContainer{
 
     // PARENTS
     @Override
-    protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         recalculateContentHeight();
 
         var viewX = Math.round(this.getVisualX());
@@ -66,7 +66,7 @@ public class UIScrollView extends UIContainer{
     }
 
     @Override
-    public UIElement addChild(UIElement child) {
+    public UIContainer addChild(UIElement child) {
         super.addChild(child);
         recalculateContentHeight();
         return this;
@@ -85,9 +85,9 @@ public class UIScrollView extends UIContainer{
     }
 
     @Override
-    protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
-        if (isMouseOnScrollBar(mouseX, mouseY)) return EMPTY_TOOLTIP;
-        return super.resolveTooltips(mouseX, mouseY);
+    public UIContainer resolveTooltip(int mouseX, int mouseY) {
+        if (isMouseOnScrollBar(mouseX, mouseY)) return null;
+        return super.resolveTooltip(mouseX, mouseY);
     }
 
     @Override
