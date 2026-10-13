@@ -21,7 +21,7 @@ public class UIContainer extends UIElement {
     @Override
     protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         for(var child : children){
-            child.updatePosition(x, y);
+            child.updatePosition(getRawX(), getRawY());
             child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded());
         }
     }
@@ -72,11 +72,58 @@ public class UIContainer extends UIElement {
 
     @Override
     public boolean isHovering(int mouseX, int mouseY) {
-        if (super.isHovering(mouseX, mouseY)) return true;
+        if (super.getRawWidth() > 0 && super.getRawHeight() > 0 && super.isHovering(mouseX, mouseY)) return true;
         for (var child : children) {
-            if (child.isHovering(mouseX, mouseY)) return true;
+            if (child.isVisible() && child.isHovering(mouseX, mouseY)) return true;
         }
         return false;
+    }
+
+    @Override
+    public void updatePosition(int parentX, int parentY) {
+        super.updatePosition(parentX, parentY);
+        for (var child : children) {
+            child.updatePosition(getRawX(), getRawY());
+        }
+    }
+
+    @Override
+    public int getRawWidth() {
+        if (super.getRawWidth() > 0) return super.getRawWidth();
+        updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
+
+        var minX = Float.MAX_VALUE;
+        var maxX = Float.MIN_VALUE;
+        boolean hasVisibleChild = false;
+
+        for (var child : children) {
+            if (!child.isVisible()) continue;
+            hasVisibleChild = true;
+            var cx = child.getVisualX();
+            var cw = child.getVisualWidth();
+            minX = Math.min(minX, cx);
+            maxX = Math.max(maxX, cx + cw);
+        }
+        return hasVisibleChild ? Math.round(maxX - Math.min(getRawX(), minX)) : 0;
+    }
+    @Override
+    public int getRawHeight() {
+        if (super.getRawHeight() > 0) return super.getRawHeight();
+        updatePosition(getRawX() - getOffsetX(), getRawY() - getOffsetY());
+
+        var minY = Float.MAX_VALUE;
+        var maxY = Float.MIN_VALUE;
+        var hasVisibleChild = false;
+
+        for (var child : children) {
+            if (!child.isVisible()) continue;
+            hasVisibleChild = true;
+            var cy = child.getVisualY();
+            var ch = child.getVisualHeight();
+            minY = Math.min(minY, cy);
+            maxY = Math.max(maxY, cy + ch);
+        }
+        return hasVisibleChild ? Math.round(maxY - Math.min(getRawY(), minY)) : 0;
     }
 
     public void clear(){

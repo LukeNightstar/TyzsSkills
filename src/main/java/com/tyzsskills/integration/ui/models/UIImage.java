@@ -35,10 +35,10 @@ public class UIImage extends UIElement {
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if(isUniqueTexture) gui.blit(texture, x, y, 0, 0, width, height, textureSize, textureSize);
+        if(isUniqueTexture) gui.blit(texture, getRawX(), getRawY(), 0, 0, getRawWidth(), getRawHeight(), textureSize, textureSize);
         else {
             var currentStyle = style.get();
-            gui.blit(currentStyle.image().texture(), x, y, currentStyle.u(), currentStyle.v(),
+            gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), currentStyle.u(), currentStyle.v(),
                     currentStyle.width(), currentStyle.height(), currentStyle.image().size(), currentStyle.image().size());
         }
     }

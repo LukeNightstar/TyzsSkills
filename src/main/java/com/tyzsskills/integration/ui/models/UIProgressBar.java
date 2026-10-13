@@ -27,7 +27,7 @@ public class UIProgressBar extends UIElement {
 
         var widthToDraw = (int)(ratio * currentStyle.width());
         if(widthToDraw > 0f) {
-            gui.blit(currentStyle.image().texture(), x, y, currentStyle.u(), currentStyle.v(),
+            gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), currentStyle.u(), currentStyle.v(),
                     widthToDraw, currentStyle.height(), currentStyle.image().size(), currentStyle.image().size());
         }
     }

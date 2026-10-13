@@ -7,8 +7,11 @@ import com.mojang.blaze3d.vertex.*;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.active.ComponentManager;
+import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillRules;
+import com.tyzsskills.integration.ui.models.UIText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -37,9 +40,6 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private final ISkill skill;
-    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
-    protected static final ResourceLocation LOCK_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png");
-
 
     private final Component displayName;
     private final List<FormattedCharSequence> descriptionLines;
@@ -106,7 +106,22 @@ public class SkillTooltip implements ClientTooltipComponent {
 
     //UTILS
     private void renderTitle(GuiGraphics gui, int x, int y, Font font) {
-        gui.drawString(font, this.displayName, x + 26, y + 7, 0xFFFFFF, true);
+        var tags = skill.getTags();
+        var startX = x + 26;
+        var startY = tags.isEmpty() ? y + 7 : y + 1;
+
+        gui.drawString(font, this.displayName, startX, startY, 0xFFFFFF, true);
+        startY += 11;
+
+        for(var tag : tags){
+            var displayName = Component.literal("[").append(Component.translatable(tag.displayName())).append(Component.literal("]"));
+            var textWidth = font.width(displayName);
+            var text = new UIText(startX, startY, textWidth, 11, () -> displayName);
+
+            // text.render(gui, );
+            gui.drawString(font, displayName, startX, startY, tag.color(), true);
+            startX += (textWidth + 2);
+        }
     }
 
     private void renderInfos(GuiGraphics gui, int x, int y, Font font, int startY){
@@ -128,8 +143,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private void renderSkillIcon(GuiGraphics gui, int x, int y){
-        ResourceLocation icon = SkillRules.isAvailable(cache.getSkillContext(skill.getID()), cache.getPlayerContext()) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
-        if(icon == null) icon = DEFAULT_ICON;
+        ResourceLocation icon = SkillRules.isAvailable(cache.getSkillContext(skill.getID()), cache.getPlayerContext()) ? ResourceLocation.tryParse(skill.getIcon()) : Styles.LOCKED_SKILL_ICON.texture();
+        if(icon == null) icon = Styles.DEFAULT_SKILL_ICON.texture();
 
         var borderColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;
 

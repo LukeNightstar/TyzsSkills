@@ -22,18 +22,18 @@ public class UIBackground extends UIElement {
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        gui.fill(x, y + 1, x + width, y + height - 1, backgroundColor);
-        gui.fill(x + 1, y, x + width - 1, y + 1, backgroundColor);
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, backgroundColor);
+        gui.fill(getRawX(), getRawY() + 1, getRawX() + getRawWidth(), getRawY() + getRawHeight() - 1, backgroundColor);
+        gui.fill(getRawX() + 1, getRawY(), getRawX() + getRawWidth() - 1, getRawY() + 1, backgroundColor);
+        gui.fill(getRawX() + 1, getRawY() + getRawHeight() - 1, getRawX() + getRawWidth() - 1, getRawY() + getRawHeight(), backgroundColor);
 
 
         var border = drawBorder.get();
         if(!border.getA()) return;
         var borderColor = drawBorder.get().getB();
 
-        gui.fill(x + 1, y, x + width - 1, y + 1, borderColor);
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, borderColor);
-        gui.fill(x, y + 1, x + 1, y + height - 1, borderColor);
-        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, borderColor);
+        gui.fill(getRawX() + 1, getRawY(), getRawX() + getRawWidth() - 1, getRawY() + 1, borderColor);
+        gui.fill(getRawX() + 1, getRawY() + getRawHeight() - 1, getRawX() + getRawWidth() - 1, getRawY() + getRawHeight(), borderColor);
+        gui.fill(getRawX(), getRawY() + 1, getRawX() + 1, getRawY() + getRawHeight() - 1, borderColor);
+        gui.fill(getRawX() + getRawWidth() - 1, getRawY() + 1, getRawX() + getRawWidth(), getRawY() + getRawHeight() - 1, borderColor);
     }
 }

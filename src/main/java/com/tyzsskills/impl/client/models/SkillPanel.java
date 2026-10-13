@@ -50,7 +50,7 @@ public class SkillPanel extends UIContainer {
         //TO SEE SCROLL VIEW SHAPE =>scrollView.addChild(new UIBackground(0, 0, 214, 150, 0xFFD6AD55));
 
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
-        this.addChild(new UIText(253, 9, 53, 18, () -> categoryDisplayName)
+        this.addChild(new UIText(254, 10, 53, 18, () -> categoryDisplayName)
                 .withAlignment(Enums.TextAlignment.RIGHT).withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 

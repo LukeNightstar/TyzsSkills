@@ -4,20 +4,18 @@ import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class UIElement {
 
-    public int offsetX, offsetY, x, y, width, height;
-    protected float scale = 1f;
+    private int offsetX, offsetY;
+    private int rawX, rawY, rawWidth, rawHeight;
+    private float scale = 1f;
     protected Enums.ScalePivot scalePivot = Enums.ScalePivot.TOP_LEFT;
 
     private boolean currentShaded = false;
@@ -31,8 +29,8 @@ public abstract class UIElement {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
 
-        this.width = width;
-        this.height = height;
+        this.rawWidth = width;
+        this.rawHeight = height;
     }
 
     //Fluents
@@ -161,12 +159,15 @@ public abstract class UIElement {
 
     //Tools
     public boolean isHovering(int mouseX, int mouseY){
-        if (width <= 0 && height <= 0) return true;
-        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+        var visualWidth = getVisualWidth(); var visualHeight = getVisualHeight();
+        if (visualWidth <= 0 || visualHeight <= 0) return false;
+
+        var visualX = getVisualX(); var visualY = getVisualY();
+        return mouseX >= visualX && mouseX < visualX + visualWidth && mouseY >= visualY && mouseY < visualY + visualHeight;
     }
-    public final void updatePosition(int parentX, int parentY){
-        this.x = parentX + this.offsetX;
-        this.y = parentY + this.offsetY;
+    public void updatePosition(int parentX, int parentY){
+        this.rawX = parentX + this.offsetX;
+        this.rawY = parentY + this.offsetY;
     }
 
     //Utils
@@ -177,8 +178,8 @@ public abstract class UIElement {
         gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
     private void drawScaled(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded) {
-        float pivotX = (scalePivot == Enums.ScalePivot.CENTER) ? x + (width / 2f) : x;
-        float pivotY = (scalePivot == Enums.ScalePivot.CENTER) ? y + (height / 2f) : y;
+        var pivotX = getPivotX();
+        var pivotY = getPivotY();
 
         gui.pose().pushPose();
         gui.pose().translate(pivotX, pivotY, 0);
@@ -189,6 +190,34 @@ public abstract class UIElement {
 
         gui.pose().popPose();
     }
+    protected float getPivotX(){return scalePivot == Enums.ScalePivot.CENTER ? getRawX() + getRawWidth() / 2f : getRawX();}
+    protected float getPivotY(){return scalePivot == Enums.ScalePivot.CENTER ? getRawY() + getRawHeight() / 2f : getRawY();}
+
+
+    //GETTERS
+    //=============RAW=============
+    public int getRawX(){return rawX;}
+    public int getRawY(){return rawY;}
+    public int getRawWidth(){return rawWidth;}
+    public int getRawHeight(){return rawHeight;}
+    public int getOffsetX(){return offsetX;}
+    public int getOffsetY(){return offsetY;}
+    public float getScale(){return scale;}
+    public boolean isVisible(){return visibleWhen.get();}
+
+    //=============VISUAL=============
+    public float getVisualWidth(){return getRawWidth() * scale;}
+    public float getVisualHeight(){return getRawHeight() * scale;}
+    public float getVisualX(){
+        float pivotX = getPivotX();
+        return pivotX + (getRawX() - pivotX) * scale;
+    }
+    public float getVisualY(){
+        float pivotY = getPivotY();
+        return pivotY + (getRawY() - pivotY) * scale;
+    }
+
+
 
     //STATIC
     public static final List<Either<FormattedText, TooltipComponent>> EMPTY_TOOLTIP = List.of();

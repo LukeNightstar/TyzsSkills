@@ -38,36 +38,53 @@ public class UIText extends UIElement {
         var finalText = textExtractor.get();
         if (finalText == null) return;
 
-        var drawX = x;
-        int textWidth;
-        int textHeight;
+        var drawX = getTextRawX();
+        var drawY = super.getRawY();
+        var textWidth = getTextRawWidth();
+        var textHeight = getTextRawHeight();
 
-        if (wrapWidth > 0) {
-            var lines = FONT.split(finalText, wrapWidth);
-            var maxLineW = 0;
-            for (var line : lines) {
-                maxLineW = Math.max(maxLineW, FONT.width(line));
-            }
-            textWidth = maxLineW;
-            textHeight = Math.max(FONT.lineHeight, lines.size() * FONT.lineHeight);
-        } else {
-            textWidth = FONT.width(finalText);
-            textHeight = FONT.lineHeight;
+        renderBackground(gui, drawX, drawY, textWidth, textHeight);
 
-            var localWidth = scale != 0f ? (int) (width / scale) : width;
-            switch (alignment) {
-                case RIGHT -> drawX = x + localWidth - textWidth;
-                case CENTER -> drawX = x + (localWidth - textWidth) / 2;
-                case LEFT -> drawX = x;
-            }
-        }
-
-        renderBackground(gui, drawX, y, textWidth, textHeight);
-
-        if (wrapWidth > 0) gui.drawWordWrap(FONT, finalText, x, y, wrapWidth, 0xFFFFFFFF);
-        else gui.drawString(FONT, finalText, drawX, y, 0xFFFFFFFF, false);
-
+        if (wrapWidth > 0) gui.drawWordWrap(FONT, finalText, drawX, drawY, wrapWidth, 0xFFFFFFFF);
+        else gui.drawString(FONT, finalText, drawX, drawY, 0xFFFFFFFF, false);
     }
+
+
+    @Override
+    public int getRawWidth() {
+        int textW = getTextRawWidth();
+        return textW > 0 ? textW + (getPaddingX() * 2) : 0;
+    }
+    @Override
+    public int getRawHeight() {
+        var textH = getTextRawHeight();
+        return textH > 0 ? textH + (getPaddingY() * 2) : 0;
+    }
+    @Override
+    public int getRawX() {
+        return getTextRawX() - getPaddingX();
+    }
+    @Override
+    public int getRawY() {
+        return super.getRawY() - getPaddingY();
+    }
+    @Override
+    protected float getPivotX() {
+        var rawX = getRawX();
+        var rawW = getRawWidth();
+
+        if (scalePivot == Enums.ScalePivot.CENTER) return rawX + (rawW / 2f);
+
+        if (wrapWidth > 0) return rawX;
+        return switch (alignment) {
+            case RIGHT -> rawX + rawW;
+            case CENTER -> rawX + (rawW / 2f);
+            case LEFT -> rawX;
+        };
+    }
+    @Override
+    protected float getPivotY() {return scalePivot == Enums.ScalePivot.CENTER ? getRawY() + (getRawHeight() / 2f) : getRawY();}
+
 
     //IMPLEMENTATION
     private void renderBackground(GuiGraphics gui, int textX, int textY, int textW, int textH){
@@ -92,4 +109,43 @@ public class UIText extends UIElement {
         gui.fill(bgX + bgW - 1, bgY + 1, bgX + bgW, bgY + bgH - 1, currentStyle.borderColor());
 
     }
+
+    //UTILS
+    private int getTextRawWidth() {
+        var finalText = textExtractor.get();
+        if (finalText == null) return 0;
+
+        if (wrapWidth > 0) {
+            var lines = FONT.split(finalText, wrapWidth);
+            var maxLineW = 0;
+            for (var line : lines) maxLineW = Math.max(maxLineW, FONT.width(line));
+            return maxLineW;
+        }
+        return FONT.width(finalText);
+    }
+    private int getTextRawHeight() {
+        var finalText = textExtractor.get();
+        if (finalText == null) return 0;
+
+        if (wrapWidth > 0) {
+            var lines = FONT.split(finalText, wrapWidth);
+            return Math.max(FONT.lineHeight, lines.size() * FONT.lineHeight);
+        }
+        return FONT.lineHeight;
+    }
+    private int getTextRawX() {
+        var baseX = super.getRawX();
+        if (wrapWidth > 0) return baseX;
+
+        var boxWidth = super.getRawWidth();
+        var textW = getTextRawWidth();
+        return switch (alignment) {
+            case RIGHT -> baseX + boxWidth - textW;
+            case CENTER -> baseX + (boxWidth - textW) / 2;
+            case LEFT -> baseX;
+        };
+    }
+    private int getPaddingX() {return backgroundStyle != null && backgroundStyle.get() != null ? backgroundStyle.get().paddingX() : 0;}
+    private int getPaddingY() {return backgroundStyle != null && backgroundStyle.get() != null ? backgroundStyle.get().paddingY() : 0;}
+
 }

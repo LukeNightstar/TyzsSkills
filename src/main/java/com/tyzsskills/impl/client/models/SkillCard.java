@@ -103,7 +103,7 @@ public class SkillCard extends UIContainer {
 
         //BADGE
         var textScale = .57f;
-        this.addChild(new UIText(29, 9, 30, 10, this::getSkillLevelText)
+        this.addChild(new UIText(30, 10, 30, 10, this::getSkillLevelText)
                 .withWrapWidth((int)(30 / textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> LEVEL_BACKGROUND, () -> isMaxed)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 

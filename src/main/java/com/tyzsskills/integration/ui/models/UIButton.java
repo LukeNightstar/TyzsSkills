@@ -33,7 +33,7 @@ public class UIButton extends UIElement {
         else if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(currentStyle.image().texture(), x, y, finalU, finalV, width, height, currentStyle.image().size(), currentStyle.image().size());
+        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size());
     }
 
     @Override

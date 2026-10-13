@@ -27,8 +27,8 @@ public class UIEntity extends UIElement {
         var entity = entityExtractor.get();
         if(entity == null) return;
 
-        float renderX = this.x + (this.width / 2.0f);
-        float renderY = this.y + this.height;
+        float renderX = this.getRawX() + (this.getRawWidth() / 2.0f);
+        float renderY = this.getRawY() + this.getRawHeight();
 
         float eyeY = renderY - (entityScale * 1.6f);
         float mouseXOffset = renderX - mouseX;
