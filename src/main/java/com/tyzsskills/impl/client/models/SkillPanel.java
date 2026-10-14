@@ -50,7 +50,8 @@ public class SkillPanel extends UIContainer {
 
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
         this.addChild(new UIText(307, 10, () -> categoryDisplayName)
-                .withAlignment(Enums.TextAlignment.RIGHT).withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
+                .withAlignment(Enums.TextAlignment.RIGHT)
+                .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 
         this.addChild(tabsPanel);

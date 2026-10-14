@@ -133,10 +133,10 @@ public class SkillTooltip {
 //        ResourceLocation icon = SkillRules.isAvailable(cache.getSkillContext(skill.getID()), cache.getPlayerContext()) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
 //        if(icon == null) icon = DEFAULT_ICON;
 //
-//        var borderColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;
+//        var borderStartColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;
 //
-//        gui.fill(x + 1, y, x + 21, y + 22, borderColor); //border
-//        gui.fill(x, y + 1, x + 22, y + 21, borderColor); //border
+//        gui.fill(x + 1, y, x + 21, y + 22, borderStartColor); //border
+//        gui.fill(x, y + 1, x + 22, y + 21, borderStartColor); //border
 //        gui.fill(x + 2, y + 1, x + 20, y + 21, 0xFF222222); //background
 //        gui.fill(x + 1, y + 2, x + 21, y + 20, 0xFF222222); //background
 //        gui.blit(icon, x + 3, y + 3, 0, 0, 16, 16, 16, 16); //icon

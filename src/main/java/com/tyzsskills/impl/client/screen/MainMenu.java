@@ -110,7 +110,7 @@ public class MainMenu extends Screen {
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
 
         var activeTooltip = mainPanel.resolveTooltip(mouseX, mouseY);
-        if(activeTooltip != null) UITooltipRenderer.render(gui, activeTooltip, mouseX, mouseY, width, height, Styles.TOOLTIP);
+        if(activeTooltip != null) UITooltipRenderer.render(gui, activeTooltip, mouseX, mouseY, width, height);
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){

@@ -85,7 +85,7 @@ public class UIScrollView extends UIContainer{
     }
 
     @Override
-    public UIContainer resolveTooltip(int mouseX, int mouseY) {
+    public UITooltip resolveTooltip(int mouseX, int mouseY) {
         if (isMouseOnScrollBar(mouseX, mouseY)) return null;
         return super.resolveTooltip(mouseX, mouseY);
     }

@@ -14,7 +14,15 @@ public class UIStyles{
     }
     public record ImageStyle(int width, int height, int u, int v, UITexture image){}
     public record ScrollBarStyle(int width, int height, int u, int v, int uHover, int vHover, UITexture image){}
-    public record BackgroundStyle(int backgroundColor, int borderColor, int paddingX, int paddingY){}
+
+
+
+    public record BackgroundStyle(int backgroundStartColor, int backgroundEndColor, int borderStartColor, int borderEndColor, int paddingX, int paddingY){
+
+        public BackgroundStyle(int backgroundColor, int borderColor, int paddingX, int paddingY){
+            this(backgroundColor, backgroundColor, borderColor, borderColor, paddingX, paddingY);
+        }
+    }
 }
 
 

@@ -2,14 +2,17 @@ package com.tyzsskills.integration.ui;
 
 import com.tyzsskills.integration.ui.models.UIBackground;
 import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UITooltip;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class UITooltipRenderer {
-    public static void render(GuiGraphics gui, UIContainer tooltip, int mouseX, int mouseY, int screenWidth, int screenHeight, UIStyles.BackgroundStyle style) {
+    public static void render(GuiGraphics gui, UITooltip tooltip, int mouseX, int mouseY, int screenWidth, int screenHeight) {
         if (tooltip == null) return;
 
         tooltip.updatePosition(0, 0);
+
+        var style = tooltip.tooltipStyle.get();
 
         var padX = style.paddingX();
         var padY = style.paddingY();
@@ -34,9 +37,7 @@ public class UITooltipRenderer {
         gui.pose().pushPose();
         gui.pose().translate(x, y, 400.0f);
 
-        var background = new UIBackground(0, 0, totalWidth, totalHeight, () -> style);
-        background.updatePosition(0, 0);
-        background.render(gui, -1, -1, 0f);
+        UIBackground.renderBackground(gui, 0, 0, totalWidth, totalHeight, style, true, true);
 
         tooltip.updatePosition(padX - shiftX, padY - shiftY);
         tooltip.draw(gui, mouseX - x, mouseY - y, 0f);

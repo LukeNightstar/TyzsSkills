@@ -14,8 +14,10 @@ public class Styles {
     public static final int COLOR_BORDER_MAXED = 0xFFA38441;
     public static final int COLOR_BORDER = 0xFFFFFFFF;
 
-    public static final int TOOLTIP_BACKGROUND = 0xFF000000;
-    public static final int TOOLTIP_BORDER = 0xFFFFFFFF;
+    public static final int TOOLTIP_BACKGROUND_START = 0xFF000000;
+    public static final int TOOLTIP_BACKGROUND_END = 0xFF202020;
+    public static final int TOOLTIP_BORDER_START = 0xFFFFFFFF;
+    public static final int TOOLTIP_BORDER_END = 0xFFD0D0D0;
 
     //MISC
     public static final Font FONT = Minecraft.getInstance().font;
@@ -36,7 +38,7 @@ public class Styles {
             new UIStyles.BackgroundStyle(COLOR_BG, COLOR_BORDER, 4, 4);
 
     public static final UIStyles.BackgroundStyle TOOLTIP =
-            new UIStyles.BackgroundStyle(TOOLTIP_BACKGROUND, TOOLTIP_BORDER, 3, 3);
+            new UIStyles.BackgroundStyle(TOOLTIP_BACKGROUND_START, TOOLTIP_BACKGROUND_END, TOOLTIP_BORDER_START, TOOLTIP_BORDER_END, 4, 4);
 
 
 }

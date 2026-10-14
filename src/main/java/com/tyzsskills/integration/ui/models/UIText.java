@@ -1,6 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,8 @@ public class UIText extends UIElement {
     private Supplier<UIStyles.BackgroundStyle> backgroundStyle;
     private Supplier<Boolean> showBackgroundBorder = () -> false;
 
+    private boolean shadow;
+
     private Enums.TextAlignment alignment = Enums.TextAlignment.LEFT;
     private int wrapWidth = -1;
 
@@ -28,8 +31,13 @@ public class UIText extends UIElement {
         this.backgroundStyle = backgroundStyle; this.showBackgroundBorder = showBackgroundBorder; return this;}
 
     public UIText(int offsetX, int offsetY, Supplier<MutableComponent> textExtractor) {
+        this(offsetX, offsetY, textExtractor, true);
+    }
+
+    public UIText(int offsetX, int offsetY, Supplier<MutableComponent> textExtractor, boolean shadow) {
         super(offsetX, offsetY, 0, 0);
         this.textExtractor = textExtractor;
+        this.shadow = shadow;
     }
 
     //PARENT
@@ -46,7 +54,7 @@ public class UIText extends UIElement {
         renderBackground(gui, drawX, drawY, textWidth, textHeight);
 
         if (wrapWidth > 0) gui.drawWordWrap(FONT, finalText, drawX, drawY, wrapWidth, 0xFFFFFFFF);
-        else gui.drawString(FONT, finalText, drawX, drawY, 0xFFFFFFFF, false);
+        else gui.drawString(FONT, finalText, drawX, drawY, 0xFFFFFFFF, shadow);
     }
 
 
@@ -87,26 +95,16 @@ public class UIText extends UIElement {
 
     //IMPLEMENTATION
     private void renderBackground(GuiGraphics gui, int textX, int textY, int textW, int textH){
-        if(backgroundStyle == null) return;
-
+        if (backgroundStyle == null) return;
         var currentStyle = backgroundStyle.get();
+        if (currentStyle == null) return;
 
         var bgX = textX - currentStyle.paddingX();
         var bgY = textY - currentStyle.paddingY();
         var bgW = textW + (currentStyle.paddingX() * 2);
         var bgH = textH + (currentStyle.paddingY() * 2);
 
-        gui.fill(bgX, bgY + 1, bgX + bgW, bgY + bgH - 1, currentStyle.backgroundColor());
-        gui.fill(bgX + 1, bgY, bgX + bgW - 1, bgY + 1, currentStyle.backgroundColor());
-        gui.fill(bgX + 1, bgY + bgH - 1, bgX + bgW - 1, bgY + bgH, currentStyle.backgroundColor());
-
-        if (!showBackgroundBorder.get()) return;
-
-        gui.fill(bgX + 1, bgY, bgX + bgW - 1, bgY + 1, currentStyle.borderColor());
-        gui.fill(bgX + 1, bgY + bgH - 1, bgX + bgW - 1, bgY + bgH, currentStyle.borderColor());
-        gui.fill(bgX, bgY + 1, bgX + 1, bgY + bgH - 1, currentStyle.borderColor());
-        gui.fill(bgX + bgW - 1, bgY + 1, bgX + bgW, bgY + bgH - 1, currentStyle.borderColor());
-
+        UIBackground.renderBackground(gui, bgX, bgY, bgW, bgH, currentStyle, showBackgroundBorder.get());
     }
 
     //UTILS
@@ -114,23 +112,27 @@ public class UIText extends UIElement {
         var finalText = textExtractor.get();
         if (finalText == null) return 0;
 
+        var emptyLeftPixels = shadow ? 0 : 1;
+
         if (wrapWidth > 0) {
             var lines = FONT.split(finalText, wrapWidth);
             var maxLineW = 0;
             for (var line : lines) maxLineW = Math.max(maxLineW, FONT.width(line));
-            return maxLineW;
+            return maxLineW - emptyLeftPixels;
         }
-        return FONT.width(finalText);
+        return FONT.width(finalText) - emptyLeftPixels;
     }
     private int getTextRawHeight() {
         var finalText = textExtractor.get();
         if (finalText == null) return 0;
 
+        var emptyBottomPixels = shadow ? 1 : 2;
+
         if (wrapWidth > 0) {
             var lines = FONT.split(finalText, wrapWidth);
-            return Math.max(FONT.lineHeight, lines.size() * FONT.lineHeight);
+            return Math.max(FONT.lineHeight, lines.size() * FONT.lineHeight) - emptyBottomPixels;
         }
-        return FONT.lineHeight;
+        return FONT.lineHeight - emptyBottomPixels;
     }
     private int getTextRawX() {
         var baseX = super.getRawX();

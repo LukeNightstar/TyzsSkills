@@ -3,6 +3,7 @@ package com.tyzsskills.integration.ui;
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UITooltip;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
@@ -22,7 +23,7 @@ public abstract class UIElement {
     private boolean currentShaded = false;
     protected boolean isCurrentShaded(){return currentShaded;}
 
-    protected Supplier<UIContainer> tooltip = () -> null;
+    protected Supplier<UITooltip> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
     protected Supplier<Boolean> shadedWhen = () -> false;
 
@@ -38,7 +39,7 @@ public abstract class UIElement {
     public UIElement withVisibility(Supplier<Boolean> supplier) {this.visibleWhen = supplier; return this;}
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
-    public UIElement withTooltip(Supplier<UIContainer> supplier){tooltip = supplier; return this;}
+    public UIElement withTooltip(Supplier<UITooltip> supplier){tooltip = supplier; return this;}
 
 
     //Draws
@@ -111,7 +112,7 @@ public abstract class UIElement {
     }
 
     //Tooltips
-    public UIContainer getHoveredTooltip(int mouseX, int mouseY) {
+    public UITooltip getHoveredTooltip(int mouseX, int mouseY) {
         if (visibleWhen.get() && isHovering(mouseX, mouseY)) return tooltip.get();
         return null;
     }

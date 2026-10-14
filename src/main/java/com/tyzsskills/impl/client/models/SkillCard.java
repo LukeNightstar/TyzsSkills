@@ -6,6 +6,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
+import com.tyzsskills.impl.client.tooltips.PurchaseTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
@@ -107,11 +108,13 @@ public class SkillCard extends UIContainer {
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         //BUTTONS
+        var purchaseTooltip = new PurchaseTooltip(skill);
         this.addChild(new UIButton(38, 17, () -> isShiftPressed() ? BULK_PURCHASE_BTN : PURCHASE_BTN, this::handlePurchase)
-                        .withDisabled(this::isPurchaseDisabled));//.withTooltipLines(this::getPurchaseTooltip));
+                        .withDisabled(this::isPurchaseDisabled));
+        this.addChild(new UITooltipArea(38, 17, PURCHASE_BTN.width(), PURCHASE_BTN.height(), () -> purchaseTooltip));
 
         this.addChild(new UIButton(27, 17, () -> isShiftPressed() ? BULK_REFUND_BTN : REFUND_BTN, this::handleRefund)
-                .withDisabled(this::isRefundDisabled));//.withTooltipLines(this::getRefundTooltip));
+                .withDisabled(this::isRefundDisabled));
 
         this.addChild(new UIButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
     }
