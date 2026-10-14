@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class UITooltipRenderer {
     public static void render(GuiGraphics gui, UITooltip tooltip, int mouseX, int mouseY, int screenWidth, int screenHeight) {
-        if (tooltip == null) return;
+        if (tooltip == null || !tooltip.isVisible()) return;
 
         tooltip.updatePosition(0, 0);
 

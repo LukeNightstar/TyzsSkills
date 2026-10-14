@@ -110,7 +110,7 @@ public class UIContainer extends UIElement {
         var hasVisibleChild = false;
 
         for (var child : children) {
-            if (!child.isVisible()) continue;
+            if (!child.isVisible() || child.getVisualWidth() <= 0 || child.getVisualHeight() <= 0) continue;
             hasVisibleChild = true;
             var cx = child.getVisualX();
             var cw = child.getVisualWidth();
@@ -130,7 +130,7 @@ public class UIContainer extends UIElement {
         var hasVisibleChild = false;
 
         for (var child : children) {
-            if (!child.isVisible()) continue;
+            if (!child.isVisible() || child.getVisualWidth() <= 0 || child.getVisualHeight() <= 0) continue;
             hasVisibleChild = true;
             var cy = child.getVisualY();
             var ch = child.getVisualHeight();
@@ -148,7 +148,7 @@ public class UIContainer extends UIElement {
         var minX = Float.MAX_VALUE;
         var hasVisibleChild = false;
         for (var child : children) {
-            if (!child.isVisible()) continue;
+            if (!child.isVisible() || child.getVisualWidth() <= 0 || child.getVisualHeight() <= 0) continue;
             hasVisibleChild = true;
             minX = Math.min(minX, child.getVisualX());
         }
@@ -163,7 +163,7 @@ public class UIContainer extends UIElement {
         var minY = Float.MAX_VALUE;
         var hasVisibleChild = false;
         for (var child : children) {
-            if (!child.isVisible()) continue;
+            if (!child.isVisible() || child.getVisualWidth() <= 0 || child.getVisualHeight() <= 0) continue;
             hasVisibleChild = true;
             minY = Math.min(minY, child.getVisualY());
         }

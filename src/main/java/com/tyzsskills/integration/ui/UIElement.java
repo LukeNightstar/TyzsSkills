@@ -23,6 +23,9 @@ public abstract class UIElement {
     private boolean currentShaded = false;
     protected boolean isCurrentShaded(){return currentShaded;}
 
+    private boolean currentHovered = false;
+    public boolean isHovered() { return currentHovered; }
+
     protected Supplier<UITooltip> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
     protected Supplier<Boolean> shadedWhen = () -> false;
@@ -47,9 +50,14 @@ public abstract class UIElement {
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean inheritedVisible, boolean inheritedShaded){
         var visible = inheritedVisible && visibleWhen.get();
-        if(!visible) return;
+        if(!visible) {
+            currentHovered = false;
+            return;
+        }
 
+        currentHovered = isHovering(mouseX, mouseY);
         currentShaded = inheritedShaded || shadedWhen.get();
+
 
         if(scale != 1f) drawScaled(gui, mouseX, mouseY, partialTick, currentShaded);
         else drawShadedOrNot(gui, mouseX, mouseY, partialTick, currentShaded);

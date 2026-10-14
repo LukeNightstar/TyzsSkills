@@ -4,7 +4,6 @@ import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.events.ClientEvents;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
@@ -48,8 +47,6 @@ public class TyzsskillsClient {
 
     public TyzsskillsClient(ModContainer container) {
         MOD_BUS = container.getEventBus();
-
-        NeoForge.EVENT_BUS.register(ClientEvents.class);
 
         //Config screen
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
