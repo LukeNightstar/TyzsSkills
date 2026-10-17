@@ -79,7 +79,7 @@ public class GenericEffects {
 
                 var expectedOperation = modifier.operation();
 
-                if(modifier.attribute().equals("minecraft:generic.oxygen_bonus")){
+                if(modifier.attribute().equals("minecraft:oxygen_bonus")){
                     expectedOperation = AttributeModifier.Operation.ADD_VALUE;
                     expectedValue += .75f;
                 }

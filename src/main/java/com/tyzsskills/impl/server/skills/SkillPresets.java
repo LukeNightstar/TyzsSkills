@@ -33,7 +33,7 @@ public class SkillPresets {
         var category = "abilities";
 
         finalList.add(SkillPrefab.generic("health_boost", category, List.of(2, 3, 4, 5, 7, 9, 11, 14, 17, 20))
-                        .addModifier(new Modifier("minecraft:generic.max_health",
+                        .addModifier(new Modifier("minecraft:max_health",
                                 AttributeModifier.Operation.ADD_VALUE,
                                 List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f),
                                 "skill.tyzs_skills.unit.half_hearts"))
@@ -41,35 +41,35 @@ public class SkillPresets {
                 .build());
 
         finalList.add(SkillPrefab.generic("oxygen_boost", category, List.of(2, 3, 4, 5))
-                .addModifier(new Modifier("minecraft:generic.oxygen_bonus",
+                .addModifier(new Modifier("minecraft:oxygen_bonus",
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(25f, 50f, 75f, 100f),
                         "skill.tyzs_skills.unit.percentage"))
                 .build());
 
         finalList.add(SkillPrefab.generic("block_reach", category, List.of(4, 6, 8, 12))
-                .addModifier(new Modifier("minecraft:player.block_interaction_range",
+                .addModifier(new Modifier("minecraft:block_interaction_range",
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(1f, 2f, 3f, 4f),
                         "skill.tyzs_skills.unit.blocks"))
                 .build());
 
         finalList.add(SkillPrefab.generic("attack_damage", category, List.of(5, 8, 12))
-                .addModifier(new Modifier("minecraft:generic.attack_damage",
+                .addModifier(new Modifier("minecraft:attack_damage",
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(1f, 2f, 3f),
                         "skill.tyzs_skills.unit.damage"))
                 .build());
 
         finalList.add(SkillPrefab.generic("sneak_speed", category, List.of(2, 2, 3, 3, 4))
-                .addModifier(new Modifier("minecraft:player.sneaking_speed",
+                .addModifier(new Modifier("minecraft:sneaking_speed",
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(20f, 40f, 60f, 80f, 100f),
                         "skill.tyzs_skills.unit.percentage"))
                 .build());
 
         finalList.add(SkillPrefab.generic("speed_boost", category, List.of(2, 3, 4, 5, 7))
-                .addModifier(new Modifier("minecraft:generic.movement_speed",
+                .addModifier(new Modifier("minecraft:movement_speed",
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(15f, 30f, 45f, 60f, 75f),
                         "skill.tyzs_skills.unit.percentage"))
@@ -77,7 +77,7 @@ public class SkillPresets {
 
 
         finalList.add(SkillPrefab.generic("step_height", category, List.of(2, 2, 3))
-                .addModifier(new Modifier("minecraft:generic.step_height",
+                .addModifier(new Modifier("minecraft:step_height",
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(0.5f, 1f, 1.5f),
                         "skill.tyzs_skills.unit.blocks"))
@@ -91,7 +91,7 @@ public class SkillPresets {
                 .build());
 
         finalList.add(SkillPrefab.generic("excavation", category, List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6))
-                .addModifier(new Modifier("minecraft:player.block_break_speed",
+                .addModifier(new Modifier("minecraft:block_break_speed",
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(20f, 40f, 60f, 80f, 100f, 120f, 140f, 160f, 180f, 200f),
                         "skill.tyzs_skills.unit.percentage"))

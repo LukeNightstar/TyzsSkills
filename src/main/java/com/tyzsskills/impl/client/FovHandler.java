@@ -46,7 +46,7 @@ public class FovHandler {
             if(skill == null) continue;
 
             for(var modifier : skill.getModifiers()){
-                if(modifier.attribute().equals("minecraft:generic.movement_speed")) {
+                if(modifier.attribute().equals("minecraft:movement_speed")) {
                     total += (modifier.getValue(level) / 100f);
                     break;
                 }
