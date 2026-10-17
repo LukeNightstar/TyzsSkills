@@ -50,13 +50,13 @@ public class ExportManager {
 
             MutableComponent message = Component.literal("§aSuccessful export §e[Open Folder]");
             message.setStyle(message.getStyle().withClickEvent(
-                    new ClickEvent(ClickEvent.Action.OPEN_FILE, exportDir.toString())
+                    new ClickEvent.OpenFile(exportDir.toString())
             ));
 
-            mc.player.displayClientMessage(message, false);
+            mc.player.sendSystemMessage(message);
 
         } catch (IOException ex) {
-            mc.player.displayClientMessage(Component.literal("§cErreur d'export: " + ex.getMessage()), false);
+            mc.player.sendSystemMessage(Component.literal("§cErreur d'export: " + ex.getMessage()));
         }
     }
 }

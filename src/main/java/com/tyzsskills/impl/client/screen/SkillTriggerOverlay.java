@@ -1,25 +1,25 @@
 package com.tyzsskills.impl.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.ARGB;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.neoforged.neoforge.client.gui.GuiLayer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkillTriggerOverlay implements LayeredDraw.Layer {
+public class SkillTriggerOverlay implements GuiLayer {
 
 
-    private record Notification(ResourceLocation icon, long creationTime, long lastUpdate){}
+    private record Notification(Identifier icon, long creationTime, long lastUpdate){}
 
     private static final List<Notification> activeNotifications = new ArrayList<>();
 
@@ -30,14 +30,14 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     private static final float scale = .65f;
 
-    private static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
+    private static final Identifier DEFAULT_ICON = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
 
 
     public static void ShowSkillIcon(String id){
         if(!Config.SHOW_SKILL_OVERLAY.get()) return;
         Skill skill = ClientCache.getSkill(id.toLowerCase());
         if(skill != null){
-            var icon = ResourceLocation.tryParse(skill.getIcon());
+            var icon = Identifier.tryParse(skill.getIcon());
             if(icon == null || Minecraft.getInstance().getResourceManager().getResource(icon).isEmpty()){
                 icon = DEFAULT_ICON;
             }
@@ -57,7 +57,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         if (activeNotifications.isEmpty()) return;
 
         var mc = Minecraft.getInstance();
@@ -74,22 +74,15 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
         int index = 0;
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
         for (var notif : activeNotifications) {
             renderSingleNotification(guiGraphics, notif, index, height, now);
             index++;
         }
-
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.disableBlend();
     }
 
 
 
-    private void renderSingleNotification(GuiGraphics guiGraphics, Notification notif, int index, int screenHeight, long now){
+    private void renderSingleNotification(GuiGraphicsExtractor guiGraphics, Notification notif, int index, int screenHeight, long now){
         long age = now - notif.creationTime;
         long idleTime = now - notif.lastUpdate;
         long duration = (long)(Config.SKILL_DURATION.get() * 1000);
@@ -111,8 +104,8 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         int cfgBg = ClientCache.parseColor(Config.SKILL_BG_COLOR.get(), 0xAA000000);
         int cfgBorder = ClientCache.parseColor(Config.SKILL_BD_COLOR.get(), 0xFFD6AD55);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scale, scale, 1f);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().scale(scale, scale);
 
         int iconSize = 16;
         int padding = 5;
@@ -138,24 +131,22 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         renderTooltipStyleRect(guiGraphics, boxX, boxY, boxSize, boxSize, bgFinal);
         renderTooltipStyleBorder(guiGraphics, boxX, boxY, boxSize, boxSize, borderFinal);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, notif.icon(), drawX, drawY, 0, 0, iconSize, iconSize, iconSize, iconSize, ARGB.white(alpha));
 
-        guiGraphics.blit(notif.icon(), drawX, drawY, 0, 0, iconSize, iconSize, iconSize, iconSize);
-
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     public static void Clear(){
         activeNotifications.clear();
     }
 
-    private void renderTooltipStyleRect(GuiGraphics gui, int x, int y, int width, int height, int color) {
+    private void renderTooltipStyleRect(GuiGraphicsExtractor gui, int x, int y, int width, int height, int color) {
         gui.fill(x, y + 1, x + width, y + height - 1, color);
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
     }
 
-    private void renderTooltipStyleBorder(GuiGraphics gui, int x, int y, int width, int height, int color) {
+    private void renderTooltipStyleBorder(GuiGraphicsExtractor gui, int x, int y, int width, int height, int color) {
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
         gui.fill(x, y + 1, x + 1, y + height - 1, color);

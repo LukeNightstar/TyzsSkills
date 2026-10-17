@@ -1,7 +1,8 @@
 package com.tyzsskills.impl.client.models;
 
+import net.minecraft.client.input.MouseButtonEvent;
 import com.tyzsskills.impl.client.screen.SkillWidget;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +31,9 @@ public class SkillEntry extends CustomScrollView.Entry{
     }
 
     @Override
-    public void render(GuiGraphics gui, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
-        int currentX = left;
+    public void extractContent(GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean isHovered, float partialTick) {
+        int currentX = this.getContentX();
+        int top = this.getContentY();
 
         for(SkillWidget widget : widgets){
             widget.render(gui, currentX, top, mouseX, mouseY, partialTick);
@@ -41,9 +43,9 @@ public class SkillEntry extends CustomScrollView.Entry{
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick){
         for(SkillWidget widget : widgets){
-            if(widget.mouseClicked(mouseX, mouseY, button)){
+            if(widget.mouseClicked(event.x(), event.y(), event.button())){
                 return true;
             }
         }

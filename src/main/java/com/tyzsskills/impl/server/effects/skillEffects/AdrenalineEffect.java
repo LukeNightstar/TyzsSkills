@@ -27,8 +27,8 @@ public class AdrenalineEffect extends SkillBehavior {
         int durationInTick = Math.max((int)(effectDuration * 20f), 20);
 
 
-        if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, durationInTick, 2));
+        if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.SPEED)){
+            player.addEffect(new MobEffectInstance(MobEffects.SPEED, durationInTick, 2));
             player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, durationInTick, 0));
             notifyClient(player, skill);
         }

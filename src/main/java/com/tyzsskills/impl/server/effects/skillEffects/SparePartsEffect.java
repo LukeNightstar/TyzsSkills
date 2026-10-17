@@ -48,7 +48,7 @@ public class SparePartsEffect extends SkillBehavior {
         List<Integer> validSlots = new ArrayList<>();
         for (int i = 0; i < container.getContainerSize(); i++) {
             var ingredient = container.getItem(i);
-            if (ingredient.isEmpty() || ingredient.getItem().hasCraftingRemainingItem(ingredient)) continue;
+            if (ingredient.isEmpty() || ingredient.getItem().getCraftingRemainder(ingredient) != null) continue;
             validSlots.add(i);
         }
 

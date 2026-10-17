@@ -33,7 +33,7 @@ public class ResilienceEffect extends SkillBehavior {
         if(newDuration < 20) return;
 
         final int capturedDuration = newDuration;
-        player.getServer().execute(() -> {
+        player.level().getServer().execute(() -> {
             if(player.isRemoved()) return;
             IS_MODIFYING.set(true);
 

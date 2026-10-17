@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.api.model.SkillBehavior;
 
 public class RefinerEffect extends SkillBehavior {
@@ -7,7 +8,7 @@ public class RefinerEffect extends SkillBehavior {
 //    private static final ThreadLocal<Boolean> IS_SMELTING = ThreadLocal.withInitial(() -> false);
 //
 //    @Override
-//    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
+//    public void onPlayerBreakBlock(BreakBlockEvent event, ServerPlayer player, int lvl, ISkill skill) {
 //        if (IS_SMELTING.get()) return;
 //        if(!(event.getLevel() instanceof ServerLevel level)) return;
 //        if (player.isShiftKeyDown()) return;
@@ -34,7 +35,7 @@ public class RefinerEffect extends SkillBehavior {
 //        IS_SMELTING.set(true);
 //
 //        try {
-//            BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, event.getPos(), state, player);
+//            BreakBlockEvent checkEvent = new BreakBlockEvent(level, event.getPos(), state, player);
 //            NeoForge.EVENT_BUS.post(checkEvent);
 //            if (checkEvent.isCanceled()) return;
 //

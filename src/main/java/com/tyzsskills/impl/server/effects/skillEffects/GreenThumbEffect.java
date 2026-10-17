@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.api.model.SkillBehavior;
@@ -8,11 +9,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.*;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehavior {
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void onPlayerBreakBlock(BreakBlockEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
         if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
 
@@ -23,7 +23,7 @@ public class GreenThumbEffect extends SkillBehavior {
         if(block instanceof CropBlock crop && crop.isMaxAge(state)) flag = true;
         else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) flag = true;
         else if(block instanceof CocoaBlock && state.getValue(CocoaBlock.AGE) >= 2) flag = true;
-        else if (block instanceof TallGrassBlock || block instanceof DeadBushBlock) flag = true;
+        else if (block instanceof TallGrassBlock || block instanceof DryVegetationBlock) flag = true;
         else if (block instanceof TallSeagrassBlock || block instanceof SeagrassBlock || block instanceof KelpBlock) flag = true;
         else if(block instanceof PumpkinBlock) flag = true;
         else if(block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof BambooStalkBlock) flag = true;

@@ -34,7 +34,7 @@
   "gui.tyzs_skills.stats.sp_spent": "PS usados",
   "gui.tyzs_skills.stats.skill_unlocked": "Skill desbloqueada",
   "key.tyzs_skills.open_menu": "Abrir Menú de Skills",
-  "key.categories.tyzs_skills": "Tyz's Skills",
+  "key.category.tyzs_skills.main": "Tyz's Skills",
   "skill.tyzs_skills.health_boost.displayName": "Mejora de Vida",
   "skill.tyzs_skills.health_boost.description": "Aumenta la vida máxima en {value} mitades de corazón",
   "skill.tyzs_skills.oxygen_boost.displayName": "Mejora de oxígeno",

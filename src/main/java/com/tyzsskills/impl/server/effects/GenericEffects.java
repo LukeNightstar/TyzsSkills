@@ -7,7 +7,7 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -30,22 +30,22 @@ public class GenericEffects {
         var expectedAttributes = new HashSet<Holder<Attribute>>();
         if(currentLvl > 0) {
             for (var modifier : skill.getModifiers()) {
-                var id = ResourceLocation.tryParse(modifier.attribute());
+                var id = Identifier.tryParse(modifier.attribute());
                 if (id == null) continue;
 
-                var holderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(id);
+                var holderOpt = BuiltInRegistries.ATTRIBUTE.get(id);
                 holderOpt.ifPresent(expectedAttributes::add);
             }
         }
 
-        for(var attributeHolder : BuiltInRegistries.ATTRIBUTE.holders().toList()) {
+        for(var attributeHolder : BuiltInRegistries.ATTRIBUTE.listElements().toList()) {
             var instance = player.getAttribute(attributeHolder);
             if (instance != null) {
-                var attrID = attributeHolder.key().location();
+                var attrID = attributeHolder.key().identifier();
 
                 var safeName = attrID.getPath().replace(".", "_");
-                var modID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeName);
-                var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
+                var modID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeName);
+                var legacyID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
                 if (instance.hasModifier(legacyID)) {
                     instance.removeModifier(legacyID);
@@ -65,20 +65,17 @@ public class GenericEffects {
             }
 
             for(var modifier : skill.getModifiers()){
-                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                Identifier attributeID = Identifier.tryParse(modifier.attribute());
                 if(attributeID == null) continue;
 
-                var attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
-                if(attribute == null) continue;
-
-                var attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
+                var attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.get(attributeID);
                 if(attributeHolderOpt.isEmpty()) continue;
 
                 var instance = player.getAttribute(attributeHolderOpt.get());
                 if(instance == null) continue;
 
                 var safeAttributeName = attributeID.getPath().replace(".", "_");
-                var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+                var modifierID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
 
                 float expectedValue = modifier.getValue(currentLvl);
                 if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
@@ -88,7 +85,7 @@ public class GenericEffects {
 
                 var expectedOperation = modifier.operation();
 
-                if(modifier.attribute().equals("minecraft:generic.oxygen_bonus")){
+                if(modifier.attribute().equals("minecraft:oxygen_bonus")){
                     expectedOperation = AttributeModifier.Operation.ADD_VALUE;
                     expectedValue += .75f;
                 }

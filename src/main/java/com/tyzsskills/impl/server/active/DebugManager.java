@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.active;
 
+import net.minecraft.server.permissions.Permissions;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.api.events.SkillReloadEvent;
@@ -64,7 +65,7 @@ public class DebugManager {
             ClientSynchronizer.syncSkillLevels(player);
             ClientSynchronizer.syncCategories(player);
 
-            if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
+            if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) && ErrorManager.hasErrors()) {
                 ErrorManager.printErrors(player);
             }
         }

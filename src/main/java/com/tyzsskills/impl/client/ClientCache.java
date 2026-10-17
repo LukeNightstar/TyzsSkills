@@ -44,14 +44,14 @@ public class ClientCache {
     public static void updateClientCacheLevel(int level){
         clientLevel = level;
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client Level Update: " + level));
         }
     }
 
     public static void updateClientCacheSP(int sp){
         clientSP = sp;
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client SP Update: " + sp));
         }
     }
 
@@ -64,7 +64,7 @@ public class ClientCache {
         clientXpLimit = limit;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp + ", limit: " + limit), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client XP Update: " + xp + ", limit: " + limit));
         }
     }
 
@@ -72,7 +72,7 @@ public class ClientCache {
         if(amount > 0f)clientAllTimeXP += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP stats Update"), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client XP stats Update"));
         }
     }
 
@@ -80,7 +80,7 @@ public class ClientCache {
         if(amount > 0)clientSpEarned += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP e stats Update"), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client SP e stats Update"));
         }
     }
 
@@ -88,7 +88,7 @@ public class ClientCache {
         if(amount > 0)clientSpSpent += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP s stats Update"), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client SP s stats Update"));
         }
     }
 
@@ -96,7 +96,7 @@ public class ClientCache {
         clientLevelData = data;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"));
         }
     }
 
@@ -115,7 +115,7 @@ public class ClientCache {
         SortingTools.registerCategories(sortedIds);
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client categories Update: " + clientCategories.size() + " loaded."), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client categories Update: " + clientCategories.size() + " loaded."));
         }
     }
 
@@ -125,7 +125,7 @@ public class ClientCache {
         for(var skill : skills){clientSkills.put(skill.getID(), skill);}
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ));
         }
 
     }
@@ -144,7 +144,7 @@ public class ClientCache {
         clientOwnedSkills = owned;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("New skill level: " + id + " level " + lvl ));
         }
     }
 
@@ -153,8 +153,8 @@ public class ClientCache {
         clientConfigMap.putAll(syncedMap);
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
-            for (var entry : clientConfigMap.entrySet()) Minecraft.getInstance().player.displayClientMessage(Component.literal(entry.getKey() + "->" + entry.getValue()), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"));
+            for (var entry : clientConfigMap.entrySet()) Minecraft.getInstance().player.sendSystemMessage(Component.literal(entry.getKey() + "->" + entry.getValue()));
         }
 
     }
@@ -164,7 +164,7 @@ public class ClientCache {
         else clientBookmarks.add(id.toLowerCase());
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Synced bookmark: " + id + ": " + state));
         }
     }
 

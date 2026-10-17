@@ -1,16 +1,18 @@
 package com.tyzsskills.impl.client.models;
 
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.tyzsskills.impl.client.screen.SkillWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry> {
 
-    private final ResourceLocation texture;
+    private final Identifier texture;
     private final int textureW, textureH;
     private final int uScroll, vScroll;
     private final int uScrollHover, vScrollHover;
@@ -28,7 +30,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
      */
 
     public CustomScrollView(Minecraft minecraft, int x, int y, int width, int height, int itemHeight,
-                                ResourceLocation texture, int textureW, int textureH,
+                                Identifier texture, int textureW, int textureH,
                                int uScroll, int vScroll, int uScrollHover, int vScrollHover, int scrollWidth, int scrollHeight){
 
         super (minecraft, width, height, y, itemHeight);
@@ -45,21 +47,20 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         this.scrollWidth = scrollWidth;
         this.scrollHeight = scrollHeight;
 
-        this.setRenderHeader(false, 0);
     }
 
     @Override
-    public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
+    public void extractWidgetRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick){
 
         gui.enableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
 
-        this.renderListItems(gui, mouseX, mouseY, partialTick);
+        this.extractListItems(gui, mouseX, mouseY, partialTick);
 
         gui.disableScissor();
 
-        int maxScroll = this.getMaxScroll();
+        int maxScroll = this.maxScrollAmount();
         if(maxScroll > 0){
-            int scrollBarX = this.getScrollbarPosition();
+            int scrollBarX = this.scrollBarX();
             int scrollBarY = this.getScrollBarTop();
 
             boolean isHoveringBar = mouseX >= scrollBarX && mouseX < scrollBarX + scrollWidth
@@ -70,7 +71,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
             if(isHoveringBar || isScrolling) {currentU = uScrollHover; currentV = vScrollHover;}
 
-            gui.blit(texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, scrollHeight, textureW, textureH);
+            gui.blit(RenderPipelines.GUI_TEXTURED, texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, scrollHeight, textureW, textureH);
 
         }
     }
@@ -94,10 +95,10 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
     }
 
     private int getScrollBarTop() {
-        int maxScroll = this.getMaxScroll();
+        int maxScroll = this.maxScrollAmount();
         if (maxScroll <= 0) return this.getY();
 
-        int barTop = this.getY() + (int)((float)this.getScrollAmount() * (float)(this.height - scrollHeight) / (float)maxScroll);
+        int barTop = this.getY() + (int)((float)this.scrollAmount() * (float)(this.height - scrollHeight) / (float)maxScroll);
 
         if (barTop < this.getY()) barTop = this.getY();
         if (barTop > this.getY() + this.height - scrollHeight) barTop = this.getY() + this.height - scrollHeight;
@@ -106,7 +107,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
     }
 
     @Override
-    protected int getScrollbarPosition(){
+    protected int scrollBarX(){
         return this.getX() + this.width - scrollWidth - 2;
     }
 
@@ -116,7 +117,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics gui){
+    protected void extractListBackground(GuiGraphicsExtractor gui){
         //Enleve le fond e terre
     }
 
@@ -128,15 +129,16 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
     }
 
     @Override
-    protected void renderSelection(GuiGraphics gui, int top, int width, int height, int outerColor, int innerColor) {
+    protected void extractSelection(GuiGraphicsExtractor gui, Entry entry, int outlineColor) {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         this.isScrolling = false;
+        double mouseX = event.x(), mouseY = event.y();
 
-        if (this.getMaxScroll() > 0) {
-            int barX = this.getScrollbarPosition();
+        if (this.maxScrollAmount() > 0) {
+            int barX = this.scrollBarX();
             int barY = this.getScrollBarTop();
 
             if (mouseX >= barX && mouseX <= barX + scrollWidth &&
@@ -147,19 +149,20 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         this.isScrolling = false;
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         if (this.isScrolling) {
-            int maxScroll = this.getMaxScroll();
+            double mouseY = event.y();
+            int maxScroll = this.maxScrollAmount();
             int trackHeight = this.height;
 
             if (trackHeight > scrollHeight) {

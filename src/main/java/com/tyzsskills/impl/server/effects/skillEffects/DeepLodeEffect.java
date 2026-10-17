@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.api.model.SkillBehavior;
 
 public class DeepLodeEffect extends SkillBehavior {
@@ -7,7 +8,7 @@ public class DeepLodeEffect extends SkillBehavior {
 //    private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
 //
 //    @Override
-//    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
+//    public void onPlayerBreakBlock(BreakBlockEvent event, ServerPlayer player, int lvl, ISkill skill) {
 //        if (IS_MINING.get()) return;
 //        if(!(event.getLevel() instanceof ServerLevel level)) return;
 //
@@ -62,7 +63,7 @@ public class DeepLodeEffect extends SkillBehavior {
 //                    if (griefProtection && BlockMarker.IsPlayerPlaced(level, currentPos)) continue;
 //
 //                    if (!currentPos.equals(startPos)) {
-//                        BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
+//                        BreakBlockEvent checkEvent = new BreakBlockEvent(level, currentPos, currentState, player);
 //                        NeoForge.EVENT_BUS.post(checkEvent);
 //                        if (checkEvent.isCanceled()) continue;
 //                    }

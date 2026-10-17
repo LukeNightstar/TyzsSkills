@@ -1,5 +1,8 @@
 package com.tyzsskills.impl.client.screen;
 
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
@@ -13,31 +16,29 @@ import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainGUI extends Screen {
-    private static final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
+    private static final Identifier background = Identifier.fromNamespaceAndPath(Tyzsskills.MODID,
             "textures/gui/background.png");
 
-    private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
+    private static final Identifier mainFont = Identifier.fromNamespaceAndPath(Tyzsskills.MODID,
             "main_font");
 
 
@@ -67,10 +68,8 @@ public class MainGUI extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-
-        guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 325, 325);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick){
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 325, 325);
 
         this.renderStrings(guiGraphics, mouseX, mouseY);
 
@@ -78,7 +77,7 @@ public class MainGUI extends Screen {
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderBacks(guiGraphics);
 
@@ -91,48 +90,48 @@ public class MainGUI extends Screen {
 
 
     //helpers
-    private void renderStrings(GuiGraphics gui, int mouseX, int mouseY){
+    private void renderStrings(GuiGraphicsExtractor gui, int mouseX, int mouseY){
         float scale = 0.6f;
         int yOffset = 1;
 
         int color1 = isHovering(mouseX, mouseY, leftPos, topPos + 81, 37, 12) ? 0xD6AD55 : 0xFFFFFFFF;
         MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl");
-        gui.pose().pushPose();
-        gui.pose().translate(leftPos + 6, topPos + 84 + yOffset, 0);
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.drawString(this.font, lvlStat, 0, 0, color1, false);
-        gui.pose().popPose();
+        gui.pose().pushMatrix();
+        gui.pose().translate(leftPos + 6, topPos + 84 + yOffset);
+        gui.pose().scale(scale, scale);
+        gui.text(this.font, lvlStat, 0, 0, color1, false);
+        gui.pose().popMatrix();
 
         MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.getLvl()));
         int text1W = this.font.width(lvlValue);
         int rightLimit1 = leftPos + 32;
-        gui.pose().pushPose();
-        gui.pose().translate(rightLimit1, topPos + 84 + yOffset, 0);
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.drawString(this.font, lvlValue, -text1W, 0, color1, false);
-        gui.pose().popPose();
+        gui.pose().pushMatrix();
+        gui.pose().translate(rightLimit1, topPos + 84 + yOffset);
+        gui.pose().scale(scale, scale);
+        gui.text(this.font, lvlValue, -text1W, 0, color1, false);
+        gui.pose().popMatrix();
 
 
 
         int color2 = isHovering(mouseX, mouseY, leftPos + 39, topPos + 81, 37, 12) ? 0xD6AD55 : 0xFFFFFFFF;
         MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP");
-        gui.pose().pushPose();
-        gui.pose().translate(leftPos + 45, topPos + 84 + yOffset, 0);
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.drawString(this.font, spStat, 0, 0, color2, false);
-        gui.pose().popPose();
+        gui.pose().pushMatrix();
+        gui.pose().translate(leftPos + 45, topPos + 84 + yOffset);
+        gui.pose().scale(scale, scale);
+        gui.text(this.font, spStat, 0, 0, color2, false);
+        gui.pose().popMatrix();
 
         MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(ClientCache.getSP())));
         int text2W = this.font.width(spValue);
         int rightLimit2 = leftPos + 71;
-        gui.pose().pushPose();
-        gui.pose().translate(rightLimit2, topPos + 84 + yOffset, 0);
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.drawString(this.font, spValue, -text2W, 0, color2, false);
-        gui.pose().popPose();
+        gui.pose().pushMatrix();
+        gui.pose().translate(rightLimit2, topPos + 84 + yOffset);
+        gui.pose().scale(scale, scale);
+        gui.text(this.font, spValue, -text2W, 0, color2, false);
+        gui.pose().popMatrix();
     }
 
-    private void renderXpBar(GuiGraphics gui){
+    private void renderXpBar(GuiGraphicsExtractor gui){
 
         float xpStat = ClientCache.getXP();
         float xpGoal = ClientCache.getXpGoal();
@@ -143,12 +142,12 @@ public class MainGUI extends Screen {
         int widthToDraw = (int)(ratio*70);
 
         if(widthToDraw > 0) {
-            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
+            gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
         }
     }
 
 
-    private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
+    private void renderEntity(GuiGraphicsExtractor gui, int scale,  int mouseX, int mouseY){
         LivingEntity player = this.minecraft.player;
         if(player == null) return;
 
@@ -156,48 +155,16 @@ public class MainGUI extends Screen {
         int renderY = topPos + 72;
 
 
-        float mouseXOffset = (float)(renderX) - mouseX;
-        float mouseYOffset = (float)(renderY - 50) - mouseY;
-
-        float f = (float)Math.atan((double)mouseXOffset / 40f);
-        float f1 = (float)Math.atan((double)mouseYOffset / 40f);
-
-        Quaternionf quatF = (new Quaternionf()).rotateZ((float)Math.PI);
-        Quaternionf quatF1 = (new Quaternionf()).rotateX(f1 * 20f * (float)Math.PI/180f);
-        quatF.mul(quatF1);
-
-        float f2 = player.yBodyRot;
-        float f3 = player.getYRot();
-        float f4 = player.getXRot();
-        float f5 = player.yHeadRotO;
-        float f6 = player.yHeadRot;
-
-        player.yBodyRot = 180f + f * 20f;
-        player.setYRot(180f + f * 40f);
-        player.setXRot(-f1 * 20f);
-        player.yHeadRot = player.getYRot();
-        player.yHeadRotO = player.getYRot();
-
-        InventoryScreen.renderEntityInInventory(
-                gui,
-                (float) renderX,
-                (float) renderY,
-                scale,
-                new Vector3f(),
-                quatF,
-                null,
-                player
-        );
-
-        player.yBodyRot = f2;
-        player.setYRot(f3);
-        player.setXRot(f4);
-        player.yHeadRot = f5;
-        player.yHeadRotO = f6;
+        // The entity is centered in its box, so the box is placed to keep the feet on renderY
+        int halfWidth = 25;
+        int top = renderY - (int)(scale * 2.1f);
+        int bottom = renderY + (int)(scale * 0.3f);
+        InventoryScreen.extractEntityInInventoryFollowsMouse(gui, renderX - halfWidth, top, renderX + halfWidth, bottom,
+                scale, 0.0625f, mouseX, mouseY, player);
 
     }
 
-    private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
+    private void renderTooltips(GuiGraphicsExtractor gui, int mouseX, int mouseY){
 
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 76, 9)){ //Xp bar
             String xpTooltip = StringTools.valueSmartFormat(ClientCache.getXP()) + "/" + StringTools.valueSmartFormat(ClientCache.getXpGoal()) ;
@@ -208,7 +175,7 @@ public class MainGUI extends Screen {
                             .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
 
 
-            gui.renderTooltip(this.font, finalText, mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, finalText, mouseX, mouseY);
         }
 
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)) {
@@ -217,7 +184,7 @@ public class MainGUI extends Screen {
             if (hoveredWidget != null) {
                 List<Either<FormattedText, TooltipComponent>> lines = hoveredWidget.getTooltip(mouseX, mouseY);
                     if (!lines.isEmpty()) {
-                        gui.renderComponentTooltipFromElements(this.font, lines, mouseX, mouseY, ItemStack.EMPTY);
+                        gui.setComponentTooltipFromElementsForNextFrame(this.font, lines, mouseX, mouseY, ItemStack.EMPTY);
                     }
             }
 
@@ -261,11 +228,11 @@ public class MainGUI extends Screen {
                             .withStyle(ChatFormatting.GRAY)));
 
 
-            gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+            gui.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 12, 12)){ //Config
-            gui.renderTooltip(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9)){ //Sort direction
@@ -273,11 +240,11 @@ public class MainGUI extends Screen {
                     Component.translatable("gui.tyzs_skills.sorting_type.ascending")
                     : Component.translatable("gui.tyzs_skills.sorting_type.descending");
 
-            gui.renderTooltip(this.font, message, mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, message, mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 15, 9)){ //Sort type
-            gui.renderTooltip(this.font, Component.translatable(SortingTools.getCurrentSortType().name()), mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, Component.translatable(SortingTools.getCurrentSortType().name()), mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 13, 7)){ //Affordable switch
@@ -289,7 +256,7 @@ public class MainGUI extends Screen {
                             .append(Component.literal(String.valueOf(state)).withStyle(color))
                             .append(Component.literal("]")));
 
-            gui.renderTooltip(this.font, message, mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, message, mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 13, 7)){ //Maxed switch
@@ -301,7 +268,7 @@ public class MainGUI extends Screen {
                             .append(Component.literal(String.valueOf(state)).withStyle(color))
                             .append(Component.literal("]")));
 
-            gui.renderTooltip(this.font, message, mouseX, mouseY);
+            gui.setTooltipForNextFrame(this.font, message, mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 144, topPos - 9,  78, 11) && this.searchBar.getValue().isBlank()){ //Search bar
@@ -315,7 +282,7 @@ public class MainGUI extends Screen {
             tooltip.add(Component.literal("# ").append(Component.translatable("gui.tuzs_skills.sorting_tooltip.prefix_id"))
                     .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
 
-            gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+            gui.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
         }
 
         var categories = SortingTools.getVisibleCategories(); //Categories
@@ -326,18 +293,18 @@ public class MainGUI extends Screen {
 
             if (isHovering(mouseX, mouseY, xStartPos, topPos + 7, 29, 20)) {
                 var tooltipElement = Either.<FormattedText, TooltipComponent>right(new CategoryTooltipData(category));
-                gui.renderComponentTooltipFromElements(this.font, List.of(tooltipElement), mouseX, mouseY, ItemStack.EMPTY);
+                gui.setComponentTooltipFromElementsForNextFrame(this.font, List.of(tooltipElement), mouseX, mouseY, ItemStack.EMPTY);
             }
 
             xStartPos += 30;
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 90, topPos + 7, 29, 20)){ //Button ALL
-            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
+            gui.setTooltipForNextFrame(font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 120, topPos + 7, 29, 20)){ //Button BOOK
-            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
+            gui.setTooltipForNextFrame(font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
     }
 
@@ -397,7 +364,7 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(bookBtn);
     }
 
-    private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){
+    private void renderIcons(GuiGraphicsExtractor gui, int mouseX, int mouseY){
         var statsU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 12, 14) ? 247 : 232;
         renderIcon(gui, .80f, statsU, 190, 14, 18, leftPos + 59, topPos + 61, 8);
 
@@ -405,16 +372,16 @@ public class MainGUI extends Screen {
         renderIcon(gui, .80f, gearU, 192, 14, 14, leftPos + 59, topPos + 46, 8);
     }
 
-    private void renderCustomButtons(GuiGraphics gui, int mouseX, int mouseY){
+    private void renderCustomButtons(GuiGraphicsExtractor gui, int mouseX, int mouseY){
 
         //ASCENT - DESCENT
         int currentDirectionV = isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9) ? 181 : 170;
         int currentDirectionU = SortingTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ? 42 : 59;
 
-        gui.blit(background, leftPos + 251, topPos - 10, currentDirectionU, currentDirectionV, 15, 9, 325, 325);
+        gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 251, topPos - 10, currentDirectionU, currentDirectionV, 15, 9, 325, 325);
 
         //SORT TYPE
-        gui.blit(background, leftPos + 267, topPos - 10, 76, 170, 15, 9, 325, 325);
+        gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 267, topPos - 10, 76, 170, 15, 9, 325, 325);
 
         int iconU = 0;
         int iconV = 0;
@@ -436,41 +403,41 @@ public class MainGUI extends Screen {
         //SWITCH UNBUYABLE
         boolean isHoverUnbuyable = isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 13, 7);
         if(SortingTools.getShowUnbuyableState()){
-            if(isHoverUnbuyable) gui.blit(background, leftPos + 100, topPos - 10, 43, 158, 15, 9, 325, 325);
-            else gui.blit(background, leftPos + 101, topPos - 9, 44, 150, 13, 7, 325, 325);
+            if(isHoverUnbuyable) gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 100, topPos - 10, 43, 158, 15, 9, 325, 325);
+            else gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 101, topPos - 9, 44, 150, 13, 7, 325, 325);
         }
         else{
-            if(isHoverUnbuyable) gui.blit(background, leftPos + 100, topPos - 10, 58, 158, 15, 9, 325, 325);
-            else gui.blit(background, leftPos + 101, topPos - 9, 59, 150, 13, 7, 325, 325);
+            if(isHoverUnbuyable) gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 100, topPos - 10, 58, 158, 15, 9, 325, 325);
+            else gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 101, topPos - 9, 59, 150, 13, 7, 325, 325);
         }
 
         //SWITCH MAXED
         boolean isHoverMaxed = isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 13, 7);
         if(SortingTools.getShowMaxedState()){
-            if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 43, 158, 15, 9, 325, 325);
-            else gui.blit(background, leftPos + 118, topPos - 9, 44, 150, 13, 7, 325, 325);
+            if(isHoverMaxed) gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 117, topPos - 10, 43, 158, 15, 9, 325, 325);
+            else gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 118, topPos - 9, 44, 150, 13, 7, 325, 325);
         }
         else{
-            if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 58, 158, 15, 9, 325, 325);
-            else gui.blit(background, leftPos + 118, topPos - 9, 59, 150, 13, 7, 325, 325);
+            if(isHoverMaxed) gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 117, topPos - 10, 58, 158, 15, 9, 325, 325);
+            else gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 118, topPos - 9, 59, 150, 13, 7, 325, 325);
         }
 
         //Category Arrow right
         if(SortingTools.isRightCatOverlaps()){
             var u = isHovering(mouseX, mouseY, leftPos + 283, topPos + 14, 10, 13) ? 229 : 219;
-            gui.blit(background, leftPos + 283, topPos + 14, u, 240, 10, 13, 325, 325);
+            gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 283, topPos + 14, u, 240, 10, 13, 325, 325);
         }
 
         //Category Arrow left
         if(SortingTools.isLeftCatOverlaps()){
             var u = isHovering(mouseX, mouseY, leftPos + 154, topPos + 14, 10, 13) ? 112 : 122;
-            gui.blit(background, leftPos + 154, topPos + 14, u, 240, 10, 13, 325, 325);
+            gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 154, topPos + 14, u, 240, 10, 13, 325, 325);
         }
 
     }
 
-    private void renderBacks(GuiGraphics gui){
-        gui.blit(background, leftPos + 97, topPos - 17, 83, 256, 189, 17, 325, 325);
+    private void renderBacks(GuiGraphicsExtractor gui){
+        gui.blit(RenderPipelines.GUI_TEXTURED, background, leftPos + 97, topPos - 17, 83, 256, 189, 17, 325, 325);
     }
 
     private void addScrollView(){
@@ -533,7 +500,7 @@ public class MainGUI extends Screen {
     }
 
 
-    private void renderIcon(GuiGraphics gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
+    private void renderIcon(GuiGraphicsExtractor gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
 
         float scaledSize = w * scale;
         float offset = (btnS - scaledSize) / 2f;
@@ -545,18 +512,14 @@ public class MainGUI extends Screen {
         int drawY = (int)(targetVisualY / scale);
 
 
-        gui.pose().pushPose();
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.setColor(1.0f, 1.0f, 1.0f, 1f);
+        gui.pose().pushMatrix();
+        gui.pose().scale(scale, scale);
+        gui.blit(RenderPipelines.GUI_TEXTURED, background, drawX, drawY, u, v, w, h, 325, 325);
 
-
-        gui.blit(background, drawX, drawY, u, v, w, h, 325, 325);
-
-        gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gui.pose().popPose();
+        gui.pose().popMatrix();
     }
 
-    private void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
+    private void renderBackdrop(GuiGraphicsExtractor gui, int x, int y, int width, int height, int color) {
         gui.fill(x, y + 1, x + width, y + height - 1, color);
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
@@ -568,9 +531,10 @@ public class MainGUI extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        int mX = (int) mouseX;
-        int mY = (int) mouseY;
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick){
+        int mX = (int) event.x();
+        int mY = (int) event.y();
+        int button = event.button();
 
         //Config Button
         if(button == 0 && isHovering(mX, mY, leftPos + 56, topPos + 44, 11, 11)){
@@ -648,11 +612,12 @@ public class MainGUI extends Screen {
             if(this.searchBar.isFocused()) this.searchBar.setFocused(false);
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
 
         if((keyCode == GLFW.GLFW_KEY_ESCAPE) && this.searchBar.isFocused()){ //Unfocus search bar
             this.searchBar.setFocused(false);
@@ -660,7 +625,7 @@ public class MainGUI extends Screen {
         }
 
         if (this.searchBar.isFocused()) { //Allow I and some other "button" to be used by the search bar
-            return this.searchBar.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+            return this.searchBar.keyPressed(event) || super.keyPressed(event);
         }
 
         if(keyCode == GLFW.GLFW_KEY_HOME){
@@ -669,15 +634,15 @@ public class MainGUI extends Screen {
         }
 
         if(keyCode == GLFW.GLFW_KEY_END){
-            this.scrollView.setScrollAmount(this.scrollView.getMaxScroll());
+            this.scrollView.setScrollAmount(this.scrollView.maxScrollAmount());
             return true;
         }
 
-        if (MainKeybind.OPEN_SKILL_KEY.matches(keyCode, scanCode)) {
+        if (MainKeybind.OPEN_SKILL_KEY.matches(event)) {
             this.onClose();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
@@ -688,12 +653,12 @@ public class MainGUI extends Screen {
 
     //states
     @Override
-    protected void renderBlurredBackground(float partialTick){}
+    protected void extractBlurredBackground(GuiGraphicsExtractor guiGraphics){}
     @Override
     public boolean isPauseScreen(){
         return false;
     }
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
 }

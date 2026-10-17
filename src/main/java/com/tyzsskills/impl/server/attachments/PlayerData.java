@@ -1,20 +1,18 @@
 package com.tyzsskills.impl.server.attachments;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import com.tyzsskills.Tyzsskills;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class PlayerData implements INBTSerializable<CompoundTag> {
+public class PlayerData implements ValueIOSerializable {
 
     private final Map<String, Integer> playerSkills = new HashMap<>();
     private final Set<String> playerBookmarks = new HashSet<>();
@@ -66,54 +64,37 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        var tag = new CompoundTag();
-
-        CompoundTag skillLevels = new CompoundTag();
+    public void serialize(ValueOutput output) {
+        var skillLevels = output.child("skill_levels");
         for(var entry : playerSkills.entrySet()) skillLevels.putInt(entry.getKey(), entry.getValue());
-        tag.put("skill_levels", skillLevels);
 
-        ListTag bookmarks = new ListTag();
-        playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
-        tag.put("skill_bookmarks", bookmarks);
+        var bookmarks = output.list("skill_bookmarks", Codec.STRING);
+        playerBookmarks.forEach(bookmarks::add);
 
-        tag.putInt("skill_level", playerLevel);
-        tag.putInt("skill_point", playerSP);
-        tag.putFloat("skill_xp", playerXP);
+        output.putInt("skill_level", playerLevel);
+        output.putInt("skill_point", playerSP);
+        output.putFloat("skill_xp", playerXP);
 
-        ListTag compatTags = new ListTag();
-        compatibility_tags.forEach(b -> compatTags.add(StringTag.valueOf(b)));
-        tag.put("compatibility_tags", compatTags);
-
-        return tag;
+        var compatTags = output.list("compatibility_tags", Codec.STRING);
+        compatibility_tags.forEach(compatTags::add);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
+    public void deserialize(ValueInput input) {
         playerBookmarks.clear();
         playerSkills.clear();
 
-        if(compoundTag.contains("skill_levels")) {
-            CompoundTag skillsTag = compoundTag.getCompound("skill_levels");
-            for(String key : skillsTag.getAllKeys()) playerSkills.put(key, skillsTag.getInt(key));
-        }
+        input.child("skill_levels").ifPresent(skillsTag -> {
+            for(String key : skillsTag.keySet()) playerSkills.put(key, skillsTag.getIntOr(key, 0));
+        });
 
-        if(compoundTag.contains("skill_bookmarks")){
-            for (var id : compoundTag.getList("skill_bookmarks", Tag.TAG_STRING)){
-                playerBookmarks.add(id.getAsString());
-            }
-        }
+        input.listOrEmpty("skill_bookmarks", Codec.STRING).forEach(playerBookmarks::add);
 
-        if(compoundTag.contains("skill_level")) playerLevel = compoundTag.getInt("skill_level");
-        if(compoundTag.contains("skill_point")) playerSP = compoundTag.getInt("skill_point");
-        if(compoundTag.contains("skill_xp")) playerXP = compoundTag.getFloat("skill_xp");
+        playerLevel = input.getIntOr("skill_level", playerLevel);
+        playerSP = input.getIntOr("skill_point", playerSP);
+        playerXP = input.getFloatOr("skill_xp", playerXP);
 
-
-        if(compoundTag.contains("compatibility_tags")){
-            for (var id : compoundTag.getList("compatibility_tags", Tag.TAG_STRING)){
-                compatibility_tags.add(id.getAsString());
-            }
-        }
+        input.listOrEmpty("compatibility_tags", Codec.STRING).forEach(compatibility_tags::add);
     }
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);

@@ -1,22 +1,23 @@
 package com.tyzsskills.impl.client.models;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class InventoryButton extends AbstractWidget {
 
 
-    private static final ResourceLocation TEXTURE_NORMAL = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
+    private static final Identifier TEXTURE_NORMAL = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
 
     private final Runnable onPress;
     private boolean isDragging = false;
@@ -29,39 +30,31 @@ public class InventoryButton extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (this.isDragging) {
             this.setX(mouseX - this.dragOffsetX);
             this.setY(mouseY - this.dragOffsetY);
         }
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-
-        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-
         int currentU = this.isHovered ? 256 : 232;
 
 
-        guiGraphics.blit(TEXTURE_NORMAL, this.getX(), this.getY(), currentU, 211, 20, 19, 325, 325);
-
-        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.disableBlend();
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_NORMAL, this.getX(), this.getY(), currentU, 211, 20, 19, 325, 325);
 
         if (this.isHovered() && !this.isDragging) {
-            guiGraphics.renderTooltip(Minecraft.getInstance().font,
+            guiGraphics.setTooltipForNextFrame(Minecraft.getInstance().font,
                     Component.translatable("button.tyzs_skills.inventory_btn"), mouseX, mouseY);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (this.isHoveredOrFocused()) {
+            int button = event.button();
             if (button == 1) {
                 this.isDragging = true;
-                this.dragOffsetX = (int) (mouseX - this.getX());
-                this.dragOffsetY = (int) (mouseY - this.getY());
+                this.dragOffsetX = (int) (event.x() - this.getX());
+                this.dragOffsetY = (int) (event.y() - this.getY());
                 this.playDownSound(Minecraft.getInstance().getSoundManager());
                 return true;
             } else if (button == 0) {
@@ -74,7 +67,7 @@ public class InventoryButton extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (this.isDragging) {
             this.isDragging = false;
             Config.INVENTORY_BUTTON_X.set(this.getX());

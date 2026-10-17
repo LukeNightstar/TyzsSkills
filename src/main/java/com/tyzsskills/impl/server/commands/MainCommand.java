@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.commands;
 
+import net.minecraft.server.permissions.Permissions;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -26,12 +27,12 @@ public class MainCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("skills")
-                .then(xp().requires(src -> src.hasPermission(3)))
-                .then(level().requires(src -> src.hasPermission(3)))
-                .then(sp().requires(src -> src.hasPermission(3)))
-                .then(skill().requires(src -> src.hasPermission(3)))
-                .then(reload().requires(src -> src.hasPermission(3)))
-                .then(reset().requires(src -> src.hasPermission(3)))
+                .then(xp().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
+                .then(level().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
+                .then(sp().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
+                .then(skill().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
+                .then(reload().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
+                .then(reset().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)))
                 .then(export());
     }
 

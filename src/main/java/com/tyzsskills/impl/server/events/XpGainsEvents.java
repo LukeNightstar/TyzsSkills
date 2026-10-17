@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.events;
 
+import net.minecraft.core.component.DataComponents;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
@@ -18,7 +20,6 @@ import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -27,7 +28,7 @@ public class XpGainsEvents {
 
     //Xp gains
     @SubscribeEvent (priority = EventPriority.LOWEST)
-    public static void onBlockBreak(BlockEvent.BreakEvent event){
+    public static void onBlockBreak(BreakBlockEvent event){
         if(event.isCanceled()) return;
         if(!(event.getPlayer() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
@@ -62,13 +63,13 @@ public class XpGainsEvents {
         if(!(player.level() instanceof ServerLevel level)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
-        long timeOfDay = level.getDayTime() % 24000L;
+        long timeOfDay = level.getOverworldClockTime() % 24000L;
         if (timeOfDay > 1000L) return;
 
         double sleepValue = Config.SLEEPING_XP_VALUE.get();
         if(sleepValue <= 0) return;
 
-        long currentDay = player.level().getDayTime() / 24000L;
+        long currentDay = player.level().getOverworldClockTime() / 24000L;
 
         var data = player.getData(ExplorationProgression.DATA);
 
@@ -97,7 +98,7 @@ public class XpGainsEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
         if(!Config.EARN_XP_BY_EATING.get()) return;
-        if(event.getItem().getFoodProperties(player) == null) return;
+        if(event.getItem().get(DataComponents.FOOD) == null) return;
 
         var value = XpGainRegistry.getFoodValue(event.getItem(), player);
         if(value > 0) XpManager.addXP(player, value);
@@ -167,7 +168,7 @@ public class XpGainsEvents {
         if(biomeValue > 0.0){
             var biomeKey = player.level().getBiome(player.blockPosition()).getKey();
             if(biomeKey != null){
-                String biomeID = biomeKey.location().toString();
+                String biomeID = biomeKey.identifier().toString();
 
                 if(!data.hasDiscoveredBiome(biomeID)){
                     data.addBiome(biomeID);
@@ -178,7 +179,7 @@ public class XpGainsEvents {
         }
 
         if(dimensionValue > 0.0){
-            String dimensionID = player.level().dimension().location().toString();
+            String dimensionID = player.level().dimension().identifier().toString();
 
             if(!data.hasDiscoveredAnyDimension()){
                 data.addDimension(dimensionID);

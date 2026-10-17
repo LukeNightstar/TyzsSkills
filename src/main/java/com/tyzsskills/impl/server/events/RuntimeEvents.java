@@ -1,5 +1,9 @@
 package com.tyzsskills.impl.server.events;
 
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.server.permissions.Permissions;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
@@ -38,7 +42,7 @@ public class RuntimeEvents {
 
         GenericEffects.restoreEffects(player);
 
-        if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
+        if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) && ErrorManager.hasErrors()) {
             ErrorManager.printErrors(player);
         }
 
@@ -50,8 +54,9 @@ public class RuntimeEvents {
         if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
                 !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
 
-        var oldData = oldPlayer.getData(PlayerData.DATA).serializeNBT(oldPlayer.registryAccess());
-        newPlayer.getData(PlayerData.DATA).deserializeNBT(newPlayer.registryAccess(), oldData);
+        var oldData = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, oldPlayer.registryAccess());
+        oldPlayer.getData(PlayerData.DATA).serialize(oldData);
+        newPlayer.getData(PlayerData.DATA).deserialize(TagValueInput.create(ProblemReporter.DISCARDING, newPlayer.registryAccess(), oldData.buildResult()));
 
         if(event.isWasDeath()) {
             DeathPenalties.applySpPenalty(newPlayer);

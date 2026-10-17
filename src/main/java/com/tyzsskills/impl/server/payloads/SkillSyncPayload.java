@@ -7,13 +7,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
 
 public record SkillSyncPayload(List<Skill> skills) implements CustomPacketPayload{
-    public static final Type<SkillSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_sync_payload"));
+    public static final Type<SkillSyncPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_sync_payload"));
 
 
     public static final StreamCodec<FriendlyByteBuf, SkillSyncPayload> STREAM_CODEC = StreamCodec.composite(

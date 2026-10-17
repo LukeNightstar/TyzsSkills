@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.xp;
 
+import net.minecraft.core.component.DataComponents;
 import com.google.gson.JsonObject;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.ErrorManager;
@@ -8,7 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -90,7 +91,7 @@ public class XpGainRegistry {
         if(entityValues.containsKey(entityID)) {cacheValue = entityValues.get(entityID);}
         else{
             for(var entry : entityTagValues.entrySet()){
-                if(type.is(entry.getKey())){cacheValue = entry.getValue(); break;}
+                if(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).is(entry.getKey())){cacheValue = entry.getValue(); break;}
             }
         }
 
@@ -108,7 +109,7 @@ public class XpGainRegistry {
 
         if(foodValues.containsKey(itemId)) {cacheValue = foodValues.get(itemId);}
         else {
-            var itemStats = item.getFoodProperties(itemStack, player);
+            var itemStats = itemStack.get(DataComponents.FOOD);
             if(itemStats == null) return 0f;
 
             var itemNutrition = itemStats.nutrition();
@@ -149,11 +150,11 @@ public class XpGainRegistry {
                 if (entry.startsWith("#") && tagMap != null && registryKey != null) {
                     String tag = entry.substring(1);
                     try {
-                        var location = ResourceLocation.parse(tag);
+                        var location = Identifier.parse(tag);
                         var tagKey = TagKey.create(registryKey, location);
                         tagMap.put(tagKey, xpValue);
                     } catch (Exception ex) {
-                        ErrorManager.registerLoadError("parsing on [" + filename + "]: " + entry + "' in xp values", "Invalid ResourceLocation format");
+                        ErrorManager.registerLoadError("parsing on [" + filename + "]: " + entry + "' in xp values", "Invalid Identifier format");
                     }
                 } else {
                     valueMap.put(entry, xpValue);

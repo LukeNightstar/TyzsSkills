@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.events;
 
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
@@ -11,7 +12,6 @@ import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -75,7 +75,7 @@ public class SkillEffectsEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerBreakBlock(BlockEvent.BreakEvent event){
+    public static void onPlayerBreakBlock(BreakBlockEvent event){
         if(event.isCanceled()) return;
         if (!(event.getPlayer() instanceof ServerPlayer player)) return;
         var manager = SkillManager.get();

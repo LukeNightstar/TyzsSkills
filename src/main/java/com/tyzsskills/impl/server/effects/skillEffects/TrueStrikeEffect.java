@@ -27,7 +27,7 @@ public class TrueStrikeEffect extends SkillBehavior {
                 IS_PENETRATING.set(true);
 
                 try{
-                    target.hurt(target.damageSources().indirectMagic(player, player), rawDamage);
+                    target.hurtServer(player.level(), target.damageSources().indirectMagic(player, player), rawDamage);
                     notifyClient(player, skill);
                 }
                 finally {
