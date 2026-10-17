@@ -169,6 +169,11 @@ public class ComponentManager {
     }
 
     public static List<FormattedCharSequence> getSkillDescription(ISkill skill) {
+        Font font = Minecraft.getInstance().font;
+        return font.split(getSkillDescriptionText(skill), 122);
+    }
+
+    public static MutableComponent getSkillDescriptionText(ISkill skill) {
         String rawDesc = Component.translatable(skill.getDescription()).getString();
         var currentLvl = ClientCache.get().getSkillLevel(skill.getID().toLowerCase());
 
@@ -208,10 +213,7 @@ public class ComponentManager {
             }
         }
 
-        Font font = Minecraft.getInstance().font;
-        MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
-
-        return font.split(fullDesc, 122);
+        return Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
     }
 
     @NotNull
