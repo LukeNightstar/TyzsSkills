@@ -10,7 +10,7 @@ import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SkillPanel extends UIContainer {
     protected final ClientCache cache;
@@ -88,7 +88,7 @@ public class SkillPanel extends UIContainer {
 
         for(int i = categoryOffset; i < end; i++){
             var category = categories.get(i);
-            var icon = ResourceLocation.tryParse(category.icon());
+            var icon = Identifier.tryParse(category.icon());
             if(icon == null) continue;
 
 

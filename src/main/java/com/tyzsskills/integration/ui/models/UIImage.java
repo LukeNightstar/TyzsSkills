@@ -1,22 +1,23 @@
 package com.tyzsskills.integration.ui.models;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles.*;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
 public class UIImage extends UIElement {
 
-    private ResourceLocation texture;
+    private Identifier texture;
     private int textureSize;
 
     private final boolean isUniqueTexture;
     private Supplier<ImageStyle> style;
 
 
-    public UIImage(int offsetX, int offsetY, int width, int height, ResourceLocation texture, int textureSize) {
+    public UIImage(int offsetX, int offsetY, int width, int height, Identifier texture, int textureSize) {
         super(offsetX, offsetY, width, height);
 
         this.texture = texture;
@@ -34,12 +35,12 @@ public class UIImage extends UIElement {
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if(isUniqueTexture) gui.blit(texture, getRawX(), getRawY(), 0, 0, getRawWidth(), getRawHeight(), textureSize, textureSize);
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
+        if(isUniqueTexture) gui.blit(RenderPipelines.GUI_TEXTURED, texture, getRawX(), getRawY(), 0, 0, getRawWidth(), getRawHeight(), textureSize, textureSize, tinted(-1));
         else {
             var currentStyle = style.get();
-            gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), currentStyle.u(), currentStyle.v(),
-                    currentStyle.width(), currentStyle.height(), currentStyle.image().size(), currentStyle.image().size());
+            gui.blit(RenderPipelines.GUI_TEXTURED, currentStyle.image().texture(), getRawX(), getRawY(), currentStyle.u(), currentStyle.v(),
+                    currentStyle.width(), currentStyle.height(), currentStyle.image().size(), currentStyle.image().size(), tinted(-1));
         }
     }
 }

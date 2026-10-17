@@ -17,7 +17,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public class UpdatePayloads {
     //INIT
     public record InitPayload(ServerSyncData serverData, PlayerSyncData playerData, ConfigSyncData configData, LevelData levelData) implements CustomPacketPayload{
 
-        public static final Type<InitPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "init_update_payload"));
+        public static final Type<InitPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "init_update_payload"));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, InitPayload> STREAM_CODEC = StreamCodec.composite(
                 ServerSyncData.STREAM_CODEC, InitPayload::serverData,
@@ -89,7 +89,7 @@ public class UpdatePayloads {
 
     //METADATA
     public record LevelPayload(int level) implements CustomPacketPayload {
-            public static final Type<LevelPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_update_payload"));
+            public static final Type<LevelPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "level_update_payload"));
 
 
             public static final StreamCodec<ByteBuf, LevelPayload> STREAM_CODEC = StreamCodec.composite(
@@ -108,7 +108,7 @@ public class UpdatePayloads {
 
     }
     public record SpPayload(int sp) implements CustomPacketPayload{
-        public static final Type<SpPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "sp_update_payload"));
+        public static final Type<SpPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "sp_update_payload"));
 
         public static final StreamCodec<ByteBuf, SpPayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.INT, SpPayload::sp,
@@ -125,7 +125,7 @@ public class UpdatePayloads {
         }
     }
     public record XpPayload(float xp, float gained, boolean triggersOverlay) implements CustomPacketPayload{
-            public static final Type<XpPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_update_payload"));
+            public static final Type<XpPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "xp_update_payload"));
 
             public static final StreamCodec<ByteBuf, XpPayload> STREAM_CODEC = StreamCodec.composite(
                     ByteBufCodecs.FLOAT, XpPayload::xp,
@@ -145,7 +145,7 @@ public class UpdatePayloads {
 
     }
     public record LevelDataPayload(LevelData data) implements CustomPacketPayload {
-        public static final Type<LevelDataPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_data_update_payload"));
+        public static final Type<LevelDataPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "level_data_update_payload"));
 
         public static final StreamCodec<ByteBuf, LevelDataPayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.FLOAT, (payload) -> payload.data.goal(),
@@ -164,7 +164,7 @@ public class UpdatePayloads {
         }
     }
     public record SkillLevelPayload(String id, int level) implements CustomPacketPayload{
-        public static final Type<SkillLevelPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_level_sync_payload"));
+        public static final Type<SkillLevelPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_level_sync_payload"));
 
         public static final StreamCodec<ByteBuf, SkillLevelPayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, SkillLevelPayload::id,
@@ -183,7 +183,7 @@ public class UpdatePayloads {
 
     }
     public record BookmarksPayload(String id, boolean state) implements CustomPacketPayload{
-        public static final Type<BookmarksPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_bookmark_payload"));
+        public static final Type<BookmarksPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_bookmark_payload"));
 
         public static final StreamCodec<ByteBuf, BookmarksPayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, BookmarksPayload::id,
@@ -202,7 +202,7 @@ public class UpdatePayloads {
 
     }
     public record DeactivationsPayload(String id, boolean state) implements CustomPacketPayload{
-        public static final Type<DeactivationsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_deactivation_payload"));
+        public static final Type<DeactivationsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_deactivation_payload"));
 
         public static final StreamCodec<ByteBuf, DeactivationsPayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, DeactivationsPayload::id,

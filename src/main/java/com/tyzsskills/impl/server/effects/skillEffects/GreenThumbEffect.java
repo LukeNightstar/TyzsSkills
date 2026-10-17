@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.active.TagMatchManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.*;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehavior {
 
@@ -19,14 +19,14 @@ public class GreenThumbEffect extends SkillBehavior {
         registerAction(
                 eventBus,
                 skillId,
-                BlockEvent.BreakEvent.class,
-                BlockEvent.BreakEvent::getPlayer,
+                BreakBlockEvent.class,
+                BreakBlockEvent::getPlayer,
                 this::onPlayerBreakBlock
         );
     }
 
 
-    private void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, ISkill skill, int lvl) {
+    private void onPlayerBreakBlock(BreakBlockEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
 
         var state = event.getState();
@@ -36,7 +36,7 @@ public class GreenThumbEffect extends SkillBehavior {
         if(block instanceof CropBlock crop && crop.isMaxAge(state)) isValidPlant = true;
         else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) isValidPlant = true;
         else if(block instanceof CocoaBlock && state.getValue(CocoaBlock.AGE) >= 2) isValidPlant = true;
-        else if (block instanceof TallGrassBlock || block instanceof DeadBushBlock) isValidPlant = true;
+        else if (block instanceof TallGrassBlock || block instanceof DryVegetationBlock) isValidPlant = true;
         else if (block instanceof TallSeagrassBlock || block instanceof SeagrassBlock || block instanceof KelpBlock) isValidPlant = true;
         else if(block instanceof PumpkinBlock) isValidPlant = true;
         else if(block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof BambooStalkBlock) isValidPlant = true;

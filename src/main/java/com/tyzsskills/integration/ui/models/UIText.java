@@ -6,7 +6,7 @@ import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.function.Supplier;
@@ -42,7 +42,7 @@ public class UIText extends UIElement {
 
     //PARENT
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         var finalText = textExtractor.get();
         if (finalText == null) return;
 
@@ -53,8 +53,8 @@ public class UIText extends UIElement {
 
         renderBackground(gui, drawX, drawY, textWidth, textHeight);
 
-        if (wrapWidth > 0) gui.drawWordWrap(FONT, finalText, drawX, drawY, wrapWidth, 0xFFFFFFFF);
-        else gui.drawString(FONT, finalText, drawX, drawY, 0xFFFFFFFF, shadow);
+        if (wrapWidth > 0) gui.textWithWordWrap(FONT, finalText, drawX, drawY, wrapWidth, tinted(0xFFFFFFFF));
+        else gui.text(FONT, finalText, drawX, drawY, tinted(0xFFFFFFFF), shadow);
     }
 
 
@@ -94,7 +94,7 @@ public class UIText extends UIElement {
 
 
     //IMPLEMENTATION
-    private void renderBackground(GuiGraphics gui, int textX, int textY, int textW, int textH){
+    private void renderBackground(GuiGraphicsExtractor gui, int textX, int textY, int textW, int textH){
         if (backgroundStyle == null) return;
         var currentStyle = backgroundStyle.get();
         if (currentStyle == null) return;

@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import net.minecraft.client.input.MouseButtonEvent;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
@@ -10,7 +11,7 @@ import com.tyzsskills.impl.client.tooltips.XpTooltip;
 import com.tyzsskills.integration.ui.UITooltipRenderer;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -104,22 +105,20 @@ public class MainMenu extends Screen {
 
     //OVERRIDES
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
-        super.renderBackground(gui, mouseX, mouseY, partialTick);
-
+    public void extractRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick){
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
 
         var activeTooltip = mainPanel.resolveTooltip(mouseX, mouseY);
         if(activeTooltip != null) UITooltipRenderer.render(gui, activeTooltip, mouseX, mouseY, width, height);
     }
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        int mX = (int) mouseX;
-        int mY = (int) mouseY;
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick){
+        int mX = (int) event.x();
+        int mY = (int) event.y();
 
-        if(button != 0) return false;
+        if(event.button() != 0) return false;
         if(mainPanel.handleClick(mX, mY)) return true;
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
@@ -127,17 +126,17 @@ public class MainMenu extends Screen {
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (mainPanel.handleDrag(mouseX, mouseY, button, dragX, dragY)) return true;
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        if (mainPanel.handleDrag(event.x(), event.y(), event.button(), dragX, dragY)) return true;
+        return super.mouseDragged(event, dragX, dragY);
     }
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if(mainPanel.handleRelease( mouseX,  mouseY, button)) return true;
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if(mainPanel.handleRelease(event.x(), event.y(), event.button())) return true;
+        return super.mouseReleased(event);
     }
     @Override
-    protected void renderBlurredBackground(float partialTick){}
+    protected void extractBlurredBackground(GuiGraphicsExtractor gui){}
     @Override
     public boolean isPauseScreen(){
         return false;

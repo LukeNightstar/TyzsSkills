@@ -34,7 +34,7 @@
   "gui.tyzs_skills.stats.sp_spent": "Потрачено ОН",
   "gui.tyzs_skills.stats.skill_unlocked": "Разблокировано навыков",
   "key.tyzs_skills.open_menu": "Открыть меню навыков",
-  "key.categories.tyzs_skills": "Навыки Tyz",
+  "key.category.tyzs_skills.main": "Навыки Tyz",
   "skill.tyzs_skills.health_boost.displayName": "Увеличение здоровья",
   "skill.tyzs_skills.health_boost.description": "Увеличивает максимальное здоровье на {value} половин сердец",
   "skill.tyzs_skills.oxygen_boost.displayName": "Задержка дыхания",

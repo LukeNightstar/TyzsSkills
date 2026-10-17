@@ -1,9 +1,10 @@
 package com.tyzsskills.integration.ui.models;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.function.Supplier;
 
@@ -24,7 +25,7 @@ public class UIButton extends UIElement {
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         int finalU;
         int finalV;
         var currentStyle = style.get();
@@ -33,7 +34,7 @@ public class UIButton extends UIElement {
         else if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size());
+        gui.blit(RenderPipelines.GUI_TEXTURED, currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size(), tinted(-1));
     }
 
     @Override

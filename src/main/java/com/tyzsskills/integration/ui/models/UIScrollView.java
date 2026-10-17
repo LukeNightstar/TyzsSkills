@@ -2,7 +2,7 @@ package com.tyzsskills.integration.ui.models;
 
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.integration.ui.UIElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
@@ -28,7 +28,7 @@ public class UIScrollView extends UIContainer{
 
     // PARENTS
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         recalculateContentHeight();
 
         var viewX = Math.round(this.getVisualX());
@@ -162,18 +162,18 @@ public class UIScrollView extends UIContainer{
         return mouseX >= trackX && mouseX < getVisualX() + getVisualWidth();
     }
 
-    private void renderScrollBar(GuiGraphics gui) {
+    private void renderScrollBar(GuiGraphicsExtractor gui) {
         var trackX = getRawX() + getRawWidth() - scrollBarWidth;
         var trackY = getRawY();
 
-        gui.fill(trackX, trackY, trackX + scrollBarWidth, trackY + getRawHeight(), 0x40000000);
+        gui.fill(trackX, trackY, trackX + scrollBarWidth, trackY + getRawHeight(), tinted(0x40000000));
 
         var thumbHeight = getThumbHeight();
         var availableTrack = getRawHeight() - thumbHeight;
         var scrollRatio = (float)(scrollAmount / getMaxScroll());
         var thumbY = trackY + (int)(scrollRatio * availableTrack);
 
-        gui.fill(trackX, thumbY, trackX + scrollBarWidth, thumbY + thumbHeight, 0x80FFFFFF);
+        gui.fill(trackX, thumbY, trackX + scrollBarWidth, thumbY + thumbHeight, tinted(0x80FFFFFF));
     }
 
     public void recalculateContentHeight() {

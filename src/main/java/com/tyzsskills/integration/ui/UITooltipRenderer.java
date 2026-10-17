@@ -4,10 +4,10 @@ import com.tyzsskills.integration.ui.models.UIBackground;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UITooltip;
 import com.tyzsskills.integration.ui.records.UIStyles;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class UITooltipRenderer {
-    public static void render(GuiGraphics gui, UITooltip tooltip, int mouseX, int mouseY, int screenWidth, int screenHeight) {
+    public static void render(GuiGraphicsExtractor gui, UITooltip tooltip, int mouseX, int mouseY, int screenWidth, int screenHeight) {
         if (tooltip == null || !tooltip.isVisible()) return;
 
         tooltip.updatePosition(0, 0);
@@ -34,14 +34,15 @@ public class UITooltipRenderer {
         if (y + totalHeight > screenHeight - 4) y = screenHeight - 4 - totalHeight;
         if (y < 4) y = 4;
 
-        gui.pose().pushPose();
-        gui.pose().translate(x, y, 400.0f);
+        gui.pose().pushMatrix();
+        gui.nextStratum();
+        gui.pose().translate(x, y);
 
         UIBackground.renderBackground(gui, 0, 0, totalWidth, totalHeight, style, true, true);
 
         tooltip.updatePosition(padX - shiftX, padY - shiftY);
         tooltip.draw(gui, mouseX - x, mouseY - y, 0f);
 
-        gui.pose().popPose();
+        gui.pose().popMatrix();
     }
 }

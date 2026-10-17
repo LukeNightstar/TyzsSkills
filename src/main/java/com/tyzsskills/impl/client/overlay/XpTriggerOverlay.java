@@ -5,15 +5,15 @@ import com.tyzsskills.impl.client.ClientCache;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 
 import java.util.Locale;
 
-public class XpTriggerOverlay implements LayeredDraw.Layer {
+public class XpTriggerOverlay implements GuiLayer {
 
     private static float accumulatedXp = 0f;
     private static long lastUpdateTime = 0L;
@@ -54,7 +54,7 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
+    public void render(GuiGraphicsExtractor gui, DeltaTracker deltaTracker) {
         long now = System.currentTimeMillis();
         long timeSinceUpdate = now - lastUpdateTime;
         long duration = (long)(Config.XP_DURATION.get() * 1000);
@@ -98,8 +98,8 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         int height = 12 + (padding * 2);
         int width = textWidth + (padding * 2);
 
-        gui.pose().pushPose();
-        gui.pose().scale(SCALE, SCALE, 1.0f);
+        gui.pose().pushMatrix();
+        gui.pose().scale(SCALE, SCALE);
 
         int x = (int)(MARGIN / SCALE);
         int scaledScreenHeight = (int)(screenHeight / SCALE);
@@ -126,19 +126,19 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         renderTooltipStyleRect(gui, x, y, width, height, bgFinal);
         renderTooltipStyleBorder(gui, x, y, width, height, borderFinal);
 
-        gui.drawString(font, text, x + padding, y + padding + 2, textFinal, true);
+        gui.text(font, text, x + padding, y + padding + 2, textFinal, true);
 
-        gui.pose().popPose();
+        gui.pose().popMatrix();
     }
 
 
-    private void renderTooltipStyleRect(GuiGraphics gui, int x, int y, int width, int height, int color) {
+    private void renderTooltipStyleRect(GuiGraphicsExtractor gui, int x, int y, int width, int height, int color) {
         gui.fill(x, y + 1, x + width, y + height - 1, color);
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
     }
 
-    private void renderTooltipStyleBorder(GuiGraphics gui, int x, int y, int width, int height, int color) {
+    private void renderTooltipStyleBorder(GuiGraphicsExtractor gui, int x, int y, int width, int height, int color) {
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
         gui.fill(x, y + 1, x + 1, y + height - 1, color);

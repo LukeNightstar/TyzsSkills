@@ -1,14 +1,12 @@
 package com.tyzsskills.impl.server.attachments;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.model.Cooldown;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.*;
@@ -16,7 +14,7 @@ import org.jetbrains.annotations.*;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class PlayerData implements INBTSerializable<CompoundTag> {
+public class PlayerData implements ValueIOSerializable {
 
     //SKILLS
     private final Map<String, Integer> playerSkills = new HashMap<>();
@@ -175,52 +173,40 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        var tag = new CompoundTag();
-
-        CompoundTag skillLevels = new CompoundTag();
+    public void serialize(ValueOutput output) {
+        var skillLevels = output.child("skill_levels");
         for(var entry : playerSkills.entrySet()) skillLevels.putInt(entry.getKey(), entry.getValue());
-        tag.put("skill_levels", skillLevels);
 
-        ListTag bookmarks = new ListTag();
-        playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
-        tag.put("skill_bookmarks", bookmarks);
+        var bookmarks = output.list("skill_bookmarks", Codec.STRING);
+        playerBookmarks.forEach(bookmarks::add);
 
-        ListTag deactivations = new ListTag();
-        playerDeactivations.forEach(b -> deactivations.add(StringTag.valueOf(b)));
-        tag.put("skill_deactivations", deactivations);
+        var deactivations = output.list("skill_deactivations", Codec.STRING);
+        playerDeactivations.forEach(deactivations::add);
 
-        CompoundTag propertyLevels = new CompoundTag();
+        var propertyLevels = output.child("property_levels");
         for(var entry : playerSpellsProperties.entrySet()) propertyLevels.putInt(entry.getKey(), entry.getValue());
-        tag.put("property_levels", propertyLevels);
 
-        ListTag spells = new ListTag();
-        playerSpells.forEach(b -> spells.add(StringTag.valueOf(b)));
-        tag.put("spells", spells);
+        var spells = output.list("spells", Codec.STRING);
+        playerSpells.forEach(spells::add);
 
-        ListTag spellSlots = new ListTag();
-        for (String s : assignedSpells) spellSlots.add(StringTag.valueOf(s == null ? "" : s));
-        tag.put("spell_slots", spellSlots);
+        var spellSlots = output.list("spell_slots", Codec.STRING);
+        for (String s : assignedSpells) spellSlots.add(s == null ? "" : s);
 
-        CompoundTag cooldownsTag = new CompoundTag();
+        var cooldownsTag = output.child("active_cooldowns");
         for (var cd : cooldowns) {
             cooldownsTag.putInt(cd.spellId, cd.ticks);
         }
-        tag.put("active_cooldowns", cooldownsTag);
 
-        tag.putInt("skill_level", playerLevel);
-        tag.putInt("skill_point", playerSP);
-        tag.putFloat("skill_xp", playerXP);
+        output.putInt("skill_level", playerLevel);
+        output.putInt("skill_point", playerSP);
+        output.putFloat("skill_xp", playerXP);
 
-        ListTag compatTags = new ListTag();
-        compatibility_tags.forEach(b -> compatTags.add(StringTag.valueOf(b)));
-        tag.put("compatibility_tags", compatTags);
-
-        return tag;
+        var compatTags = output.list("compatibility_tags", Codec.STRING);
+        compatibility_tags.forEach(compatTags::add);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
+    public void deserialize(ValueInput input) {
         playerBookmarks.clear();
         playerDeactivations.clear();
         playerSkills.clear();
@@ -229,59 +215,36 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         cooldowns.clear();
         Arrays.fill(assignedSpells, null);
 
-        if(compoundTag.contains("skill_levels")) {
-            CompoundTag skillsTag = compoundTag.getCompound("skill_levels");
-            for(String key : skillsTag.getAllKeys()) playerSkills.put(key, skillsTag.getInt(key));
+        input.child("skill_levels").ifPresent(skillsTag -> {
+            for(String key : skillsTag.keySet()) playerSkills.put(key, skillsTag.getIntOr(key, 0));
+        });
+
+        input.listOrEmpty("skill_bookmarks", Codec.STRING).forEach(playerBookmarks::add);
+        input.listOrEmpty("skill_deactivations", Codec.STRING).forEach(playerDeactivations::add);
+
+        input.child("property_levels").ifPresent(propTag -> {
+            for(String key : propTag.keySet()) playerSpellsProperties.put(key, propTag.getIntOr(key, 1));
+        });
+
+        input.listOrEmpty("spells", Codec.STRING).forEach(playerSpells::add);
+
+        var slots = input.listOrEmpty("spell_slots", Codec.STRING).stream().limit(3).toList();
+        for (int i = 0; i < slots.size(); i++) {
+            var spellId = slots.get(i);
+            assignedSpells[i] = spellId.isEmpty() ? null : spellId;
         }
 
-        if(compoundTag.contains("skill_bookmarks")){
-            for (var id : compoundTag.getList("skill_bookmarks", Tag.TAG_STRING)){
-                playerBookmarks.add(id.getAsString());
+        input.child("active_cooldowns").ifPresent(cooldownsTag -> {
+            for (String key : cooldownsTag.keySet()) {
+                cooldowns.add(new Cooldown(key, cooldownsTag.getIntOr(key, 0)));
             }
-        }
+        });
 
-        if(compoundTag.contains("skill_deactivations")){
-            for (var id : compoundTag.getList("skill_deactivations", Tag.TAG_STRING)){
-                playerDeactivations.add(id.getAsString());
-            }
-        }
+        playerLevel = input.getIntOr("skill_level", playerLevel);
+        playerSP = input.getIntOr("skill_point", playerSP);
+        playerXP = input.getFloatOr("skill_xp", playerXP);
 
-        if(compoundTag.contains("property_levels")) {
-            CompoundTag propTag = compoundTag.getCompound("property_levels");
-            for(String key : propTag.getAllKeys()) playerSpellsProperties.put(key, propTag.getInt(key));
-        }
-
-        if(compoundTag.contains("spells")){
-            for (var id : compoundTag.getList("spells", Tag.TAG_STRING)){
-                playerSpells.add(id.getAsString());
-            }
-        }
-
-        if(compoundTag.contains("spell_slots")){
-            ListTag slotsTag = compoundTag.getList("spell_slots", Tag.TAG_STRING);
-            for (int i = 0; i < Math.min(3, slotsTag.size()); i++) {
-                var spellId = slotsTag.getString(i);
-                assignedSpells[i] = spellId.isEmpty() ? null : spellId;
-            }
-        }
-
-        if (compoundTag.contains("active_cooldowns")) {
-            CompoundTag cooldownsTag = compoundTag.getCompound("active_cooldowns");
-            for (String key : cooldownsTag.getAllKeys()) {
-                cooldowns.add(new Cooldown(key, cooldownsTag.getInt(key)));
-            }
-        }
-
-        if(compoundTag.contains("skill_level")) playerLevel = compoundTag.getInt("skill_level");
-        if(compoundTag.contains("skill_point")) playerSP = compoundTag.getInt("skill_point");
-        if(compoundTag.contains("skill_xp")) playerXP = compoundTag.getFloat("skill_xp");
-
-
-        if(compoundTag.contains("compatibility_tags")){
-            for (var id : compoundTag.getList("compatibility_tags", Tag.TAG_STRING)){
-                compatibility_tags.add(id.getAsString());
-            }
-        }
+        input.listOrEmpty("compatibility_tags", Codec.STRING).forEach(compatibility_tags::add);
     }
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);

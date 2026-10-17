@@ -1,16 +1,16 @@
 package com.tyzsskills.impl.server.attachments;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import com.tyzsskills.Tyzsskills;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.function.Supplier;
 
-public class StatsTracker implements INBTSerializable<CompoundTag> {
+public class StatsTracker implements ValueIOSerializable {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);
     public static final Supplier<AttachmentType<StatsTracker>> DATA = ATTACHMENT_TYPES.register(
@@ -53,18 +53,16 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
     public int getTotalSpSpent() {return this.totalSpSpent;}
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        tag.putFloat("allTimeXp", allTimeXp);
-        tag.putInt("totalSpEarned", totalSpEarned);
-        tag.putInt("totalSpSpent", totalSpSpent);
-        return tag;
+    public void serialize(ValueOutput output) {
+        output.putFloat("allTimeXp", allTimeXp);
+        output.putInt("totalSpEarned", totalSpEarned);
+        output.putInt("totalSpSpent", totalSpSpent);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
-        if(compoundTag.contains("allTimeXp")) allTimeXp = compoundTag.getFloat("allTimeXp");
-        if(compoundTag.contains("totalSpEarned")) totalSpEarned = compoundTag.getInt("totalSpEarned");
-        if(compoundTag.contains("totalSpSpent")) totalSpSpent = compoundTag.getInt("totalSpSpent");
+    public void deserialize(ValueInput input) {
+        allTimeXp = input.getFloatOr("allTimeXp", allTimeXp);
+        totalSpEarned = input.getIntOr("totalSpEarned", totalSpEarned);
+        totalSpSpent = input.getIntOr("totalSpSpent", totalSpSpent);
     }
 }

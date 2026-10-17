@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.tooltips;
 
+import net.minecraft.client.Minecraft;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
@@ -50,7 +51,7 @@ public class PurchaseTooltip extends UITooltip {
     //IMPL
     private void updateData() {
         var currentCacheVersion = cache.getVersion();
-        var currentShiftState = Screen.hasShiftDown();
+        var currentShiftState = Minecraft.getInstance().hasShiftDown();
 
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;

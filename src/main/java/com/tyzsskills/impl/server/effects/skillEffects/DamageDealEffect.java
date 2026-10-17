@@ -43,7 +43,7 @@ public class DamageDealEffect extends SkillBehavior {
 
             try{
                 var damageSrc = player.damageSources().thorns(player);
-                source.hurt(damageSrc, event.getAmount());
+                source.hurtServer(player.level(), damageSrc, event.getAmount());
                 notifyClient(player, skill);
             }
             finally {

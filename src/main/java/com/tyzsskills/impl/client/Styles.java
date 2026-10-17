@@ -5,7 +5,7 @@ import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Styles {
 
@@ -25,13 +25,13 @@ public class Styles {
 
     //Styles
     public static final UITexture MAIN_TEXTURE =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png"), 400);
+            new UITexture(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png"), 400);
 
 
     public static final UITexture DEFAULT_SKILL_ICON =
-            new UITexture(ResourceLocation.parse("minecraft:textures/item/barrier.png"), 16);
+            new UITexture(Identifier.parse("minecraft:textures/item/barrier.png"), 16);
     public static final UITexture LOCKED_SKILL_ICON =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
+            new UITexture(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
 
 
     public static final UIStyles.BackgroundStyle DEFAULT_BACKGROUND =

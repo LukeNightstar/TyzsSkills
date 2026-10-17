@@ -1,20 +1,18 @@
 package com.tyzsskills.impl.server.attachments;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import com.tyzsskills.Tyzsskills;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ExplorationProgression implements INBTSerializable<CompoundTag> {
+public class ExplorationProgression implements ValueIOSerializable {
 
     private final Set<String> visitedBiomes = new HashSet<>();
     private final Set<String> visitedDimensions = new HashSet<>();
@@ -55,40 +53,25 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
 
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
+    public void serialize(ValueOutput output) {
+        var biomeList = output.list("biomes", Codec.STRING);
+        visitedBiomes.forEach(biomeList::add);
 
-        ListTag biomeList = new ListTag();
-        visitedBiomes.forEach(b -> biomeList.add(StringTag.valueOf(b)));
-        tag.put("biomes", biomeList);
+        var dimensionList = output.list("dimensions", Codec.STRING);
+        visitedDimensions.forEach(dimensionList::add);
 
-        ListTag dimensionList = new ListTag();
-        visitedDimensions.forEach(b -> dimensionList.add(StringTag.valueOf(b)));
-        tag.put("dimensions", dimensionList);
-
-        tag.putLong("last_sleep_day", lastSleepDay);
-
-        return tag;
+        output.putLong("last_sleep_day", lastSleepDay);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
+    public void deserialize(ValueInput input) {
         visitedBiomes.clear();
         visitedDimensions.clear();
 
-        if(compoundTag.contains("biomes")){
-            for(var biome : compoundTag.getList("biomes", Tag.TAG_STRING)){
-                visitedBiomes.add(biome.getAsString());
-            }
-        }
+        input.listOrEmpty("biomes", Codec.STRING).forEach(visitedBiomes::add);
+        input.listOrEmpty("dimensions", Codec.STRING).forEach(visitedDimensions::add);
 
-        if(compoundTag.contains("dimensions")){
-            for(var dimension : compoundTag.getList("dimensions", Tag.TAG_STRING)){
-                visitedDimensions.add(dimension.getAsString());
-            }
-        }
-
-        if(compoundTag.contains("last_sleep_day")) lastSleepDay = compoundTag.getLong("last_sleep_day");
+        lastSleepDay = input.getLongOr("last_sleep_day", lastSleepDay);
     }
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);

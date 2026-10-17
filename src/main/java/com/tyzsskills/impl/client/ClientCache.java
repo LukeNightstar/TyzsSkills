@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client;
 
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
@@ -237,7 +238,7 @@ public class ClientCache {
             cacheVersion++;
             var player = Minecraft.getInstance().player;
             if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
-            player.displayClientMessage(Component.literal(message), false);
+            player.sendSystemMessage(Component.literal(message));
         }
     }
 
@@ -262,7 +263,7 @@ public class ClientCache {
 
         if(success){
             registerNewClick();
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+            ClientPacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
         }
         return success;
     }

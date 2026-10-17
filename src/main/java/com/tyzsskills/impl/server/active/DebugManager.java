@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.active;
 
+import net.minecraft.server.permissions.Permissions;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.PlayerResetEvent;
@@ -49,7 +50,7 @@ public class DebugManager {
 
                 PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-                if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) {
+                if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) && ErrorManager.hasErrorsOrWarns()) {
                     ErrorManager.printErrors(player);
                 }
             }

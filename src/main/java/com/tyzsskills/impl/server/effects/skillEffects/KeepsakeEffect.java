@@ -5,7 +5,7 @@ import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -38,7 +38,7 @@ public class KeepsakeEffect extends SkillBehavior {
     }
 
     private void onPlayerDeath(LivingDeathEvent event, ServerPlayer player, ISkill skill, int lvl) {
-        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
+        if (player.level().getGameRules().get(GameRules.KEEP_INVENTORY)) return;
 
         Map<Integer, ItemStack> keptItems = new HashMap<>();
 

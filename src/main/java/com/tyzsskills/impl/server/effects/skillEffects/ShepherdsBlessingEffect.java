@@ -30,12 +30,12 @@ public class ShepherdsBlessingEffect extends SkillBehavior {
 
         var speedBonus = values.getValue(lvl);
         var factor = 1f + (speedBonus / 100f);
-        var server = player.getServer();
+        var server = player.level().getServer();
 
         if(TagMatchManager.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", event.getChild().getType())) return;
 
         if (server != null) {
-            server.tell(new TickTask(server.getTickCount() + 1, () -> {
+            server.schedule(new TickTask(server.getTickCount() + 1, () -> {
                 var newAge = (int) (-24000 / factor);
                 baby.setAge(newAge);
                 notifyClient(player, skill);

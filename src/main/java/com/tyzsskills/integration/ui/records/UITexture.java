@@ -1,5 +1,5 @@
 package com.tyzsskills.integration.ui.records;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-public record UITexture(ResourceLocation texture, int size) {}
+public record UITexture(Identifier texture, int size) {}

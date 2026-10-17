@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import net.minecraft.core.component.DataComponents;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.client.active.TagMatchManager;
@@ -22,7 +23,7 @@ public class NutritionEffect extends SkillBehavior {
 
     private void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, ISkill skill, int lvl) {
         var item = event.getItem();
-        var foodValue = item.getFoodProperties(player);
+        var foodValue = item.get(DataComponents.FOOD);
         if(foodValue == null) return;
 
         var values = skill.getValueSet("nutrition_bonus");

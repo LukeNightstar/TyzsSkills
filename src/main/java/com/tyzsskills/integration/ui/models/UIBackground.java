@@ -2,7 +2,7 @@ package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import oshi.util.tuples.Pair;
 
 import java.util.function.Supplier;
@@ -25,17 +25,17 @@ public class UIBackground extends UIElement {
 
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         renderBackground(gui, getRawX(), getRawY(), getRawWidth(), getRawHeight(), style.get(), drawBorder.get());
     }
 
     //STATIC
-    public static void renderBackground(GuiGraphics gui, int x, int y, int w, int h, UIStyles.BackgroundStyle style, boolean hasBorder) {
+    public static void renderBackground(GuiGraphicsExtractor gui, int x, int y, int w, int h, UIStyles.BackgroundStyle style, boolean hasBorder) {
         renderBackground(gui, x, y, w, h, style, hasBorder, false);
     }
 
 
-    public static void renderBackground(GuiGraphics gui, int x, int y, int w, int h, UIStyles.BackgroundStyle style, boolean hasBorder, boolean insetBorder) {
+    public static void renderBackground(GuiGraphicsExtractor gui, int x, int y, int w, int h, UIStyles.BackgroundStyle style, boolean hasBorder, boolean insetBorder) {
         if (!hasBorder) {
             drawCutCornerBox(gui, x, y, w, h, style.backgroundStartColor(), style.backgroundEndColor());
             return;
@@ -44,24 +44,24 @@ public class UIBackground extends UIElement {
         if (insetBorder) {
             drawCutCornerBox(gui, x, y, w, h, style.backgroundStartColor(), style.backgroundEndColor());
 
-            gui.fill(x + 1, y + 1, x + w - 1, y + 2, style.borderStartColor());
-            gui.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, style.borderEndColor());
-            gui.fillGradient(x + 1, y + 2, x + 2, y + h - 2, style.borderStartColor(), style.borderEndColor());
-            gui.fillGradient(x + w - 2, y + 2, x + w - 1, y + h - 2, style.borderStartColor(), style.borderEndColor());
+            gui.fill(x + 1, y + 1, x + w - 1, y + 2, tinted(style.borderStartColor()));
+            gui.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, tinted(style.borderEndColor()));
+            gui.fillGradient(x + 1, y + 2, x + 2, y + h - 2, tinted(style.borderStartColor()), tinted(style.borderEndColor()));
+            gui.fillGradient(x + w - 2, y + 2, x + w - 1, y + h - 2, tinted(style.borderStartColor()), tinted(style.borderEndColor()));
         } else {
-            gui.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, style.backgroundStartColor(), style.backgroundEndColor());
+            gui.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, tinted(style.backgroundStartColor()), tinted(style.backgroundEndColor()));
 
-            gui.fill(x + 1, y, x + w - 1, y + 1, style.borderStartColor());
-            gui.fill(x + 1, y + h - 1, x + w - 1, y + h, style.borderEndColor());
-            gui.fillGradient(x, y + 1, x + 1, y + h - 1, style.borderStartColor(), style.borderEndColor());
-            gui.fillGradient(x + w - 1, y + 1, x + w, y + h - 1, style.borderStartColor(), style.borderEndColor());
+            gui.fill(x + 1, y, x + w - 1, y + 1, tinted(style.borderStartColor()));
+            gui.fill(x + 1, y + h - 1, x + w - 1, y + h, tinted(style.borderEndColor()));
+            gui.fillGradient(x, y + 1, x + 1, y + h - 1, tinted(style.borderStartColor()), tinted(style.borderEndColor()));
+            gui.fillGradient(x + w - 1, y + 1, x + w, y + h - 1, tinted(style.borderStartColor()), tinted(style.borderEndColor()));
         }
     }
 
-    private static void drawCutCornerBox(GuiGraphics gui, int x, int y, int w, int h, int startColor, int endColor) {
-        gui.fill(x + 1, y, x + w - 1, y + 1, startColor);
-        gui.fillGradient(x, y + 1, x + w, y + h - 1, startColor, endColor);
-        gui.fill(x + 1, y + h - 1, x + w - 1, y + h, endColor);
+    private static void drawCutCornerBox(GuiGraphicsExtractor gui, int x, int y, int w, int h, int startColor, int endColor) {
+        gui.fill(x + 1, y, x + w - 1, y + 1, tinted(startColor));
+        gui.fillGradient(x, y + 1, x + w, y + h - 1, tinted(startColor), tinted(endColor));
+        gui.fill(x + 1, y + h - 1, x + w - 1, y + h, tinted(endColor));
     }
 
 }

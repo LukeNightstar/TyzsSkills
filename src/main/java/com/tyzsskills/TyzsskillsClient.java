@@ -17,7 +17,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -96,15 +96,15 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event){
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_notification"),
+                Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_notification"),
                 new SkillTriggerOverlay());
 
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_notification"),
+                Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "xp_notification"),
                 new XpTriggerOverlay());
 
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
+                Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
                 new LevelTriggerOverlay());
     }
 
@@ -119,6 +119,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event){
+        event.registerCategory(MainKeybind.CATEGORY);
         event.register(MainKeybind.OPEN_SKILL_KEY);
     }
 
@@ -158,8 +159,8 @@ public class TyzsskillsClient {
                                 w.getY() < savedY + 20 && w.getY() + w.getHeight() > savedY);
 
                 if (overlap) {
-                    myButton.setX(screen.getGuiLeft() + screen.getXSize() + 5);
-                    myButton.setY(screen.getGuiTop() + 5);
+                    myButton.setX(screen.getLeftPos() + screen.getImageWidth() + 5);
+                    myButton.setY(screen.getTopPos() + 5);
                 }
             }
             event.addListener(myButton);

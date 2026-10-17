@@ -9,7 +9,7 @@ import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -127,7 +127,7 @@ public class CompatibilityManager {
         if(instance == null) return;
 
         suffix = suffix.toLowerCase(Locale.ROOT);
-        ResourceLocation id = ResourceLocation.parse("tyzs_skills:" + suffix);
+        Identifier id = Identifier.parse("tyzs_skills:" + suffix);
         if(instance.hasModifier(id)) instance.removeModifier(id);
 
     }
@@ -142,11 +142,11 @@ public class CompatibilityManager {
 
         var oldData = player.getPersistentData();
         if(!didMigrate){
-            if(oldData.contains("SKILL_LEVEL")) LevelManager.setLevel(player, oldData.getInt("SKILL_LEVEL"));
+            oldData.getInt("SKILL_LEVEL").ifPresent(lvl -> LevelManager.setLevel(player, lvl));
 
-            if(oldData.contains("SKILL_POINT")) SpManager.setSp(player, oldData.getInt("SKILL_POINT"));
+            oldData.getInt("SKILL_POINT").ifPresent(sp -> SpManager.setSp(player, sp));
 
-            if(oldData.contains("SKILL_XP")) XpManager.setXp(player, oldData.getFloat("SKILL_XP"), false);
+            oldData.getFloat("SKILL_XP").ifPresent(xp -> XpManager.setXp(player, xp, false));
 
 
             for (var skill : SkillManager.getAllSkills()){
@@ -154,7 +154,7 @@ public class CompatibilityManager {
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
-                if(oldData.contains(lvlKey)) SkillManager.setSkillLevel(player, id, oldData.getInt(lvlKey));
+                oldData.getInt(lvlKey).ifPresent(lvl -> SkillManager.setSkillLevel(player, id, lvl));
 
                 if(oldData.contains(bkKey)) SkillManager.bookmarkSkill(player, id);
             }

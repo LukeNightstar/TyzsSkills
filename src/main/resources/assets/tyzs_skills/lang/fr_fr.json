@@ -34,7 +34,7 @@
   "gui.tyzs_skills.stats.sp_spent": "SP dépensés",
   "gui.tyzs_skills.stats.skill_unlocked": "Compétences débloquées",
   "key.tyzs_skills.open_menu": "Ouvrir le menu de compétences",
-  "key.categories.tyzs_skills": "Tyz's skills",
+  "key.category.tyzs_skills.main": "Tyz's skills",
   "skill.tyzs_skills.health_boost.displayName": "Santé",
   "skill.tyzs_skills.health_boost.description": "Augmente la santé maximale de {value} demis-coeurs",
   "skill.tyzs_skills.oxygen_boost.displayName": "Respiration",

@@ -6,11 +6,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record LevelToastPayload(int level, int spGain) implements CustomPacketPayload{
-    public static final Type<LevelToastPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_toast_payload"));
+    public static final Type<LevelToastPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "level_toast_payload"));
 
 
     public static final StreamCodec<ByteBuf, LevelToastPayload> STREAM_CODEC = StreamCodec.composite(

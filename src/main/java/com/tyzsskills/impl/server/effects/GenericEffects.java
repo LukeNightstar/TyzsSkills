@@ -5,7 +5,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.Skill;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -26,7 +26,7 @@ public class GenericEffects {
         var expectedAttributes = new HashSet<>();
         if (currentLvl > 0 && !deactivated) {
             for (var modifier : skill.getModifiers()) {
-                ResourceLocation id = ResourceLocation.tryParse(modifier.attribute());
+                Identifier id = Identifier.tryParse(modifier.attribute());
                 if (id != null) expectedAttributes.add(id);
             }
         }
@@ -35,11 +35,11 @@ public class GenericEffects {
             var attributeKey = instance.getAttribute().getKey();
             if(attributeKey == null) continue;
 
-            var attributeID = attributeKey.location();
+            var attributeID = attributeKey.identifier();
             var safeAttributeName = attributeID.getPath().replace(".", "_");
 
-            var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
-            var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
+            var modifierID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+            var legacyID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
             if (instance.hasModifier(legacyID)) {
                 instance.removeModifier(legacyID);
@@ -59,20 +59,17 @@ public class GenericEffects {
 
 
             for(var modifier : skill.getModifiers()){
-                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                Identifier attributeID = Identifier.tryParse(modifier.attribute());
                 if(attributeID == null) continue;
 
-                var attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
-                if(attribute == null) continue;
-
-                var attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
+                var attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.get(attributeID);
                 if(attributeHolderOpt.isEmpty()) continue;
 
                 var instance = player.getAttribute(attributeHolderOpt.get());
                 if(instance == null) continue;
 
                 var safeAttributeName = attributeID.getPath().replace(".", "_");
-                var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+                var modifierID = Identifier.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
 
                 float expectedValue = modifier.getValue(currentLvl);
                 if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||

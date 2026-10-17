@@ -12,11 +12,11 @@ import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class SkillCard extends UIContainer {
     public static final int WIDTH = 64, HEIGHT = 30;
 
     protected final ISkill skill;
-    protected final ResourceLocation icon;
+    protected final Identifier icon;
     protected final ClientCache cache;
 
     protected boolean isLocked;
@@ -37,7 +37,7 @@ public class SkillCard extends UIContainer {
     protected boolean canRefund;
     protected int currentLevel;
 
-    protected boolean isShiftPressed(){return Screen.hasShiftDown();}
+    protected boolean isShiftPressed(){return Minecraft.getInstance().hasShiftDown();}
 
     protected int latestCacheVersion = -1;
 
@@ -90,7 +90,7 @@ public class SkillCard extends UIContainer {
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         updateData();
         super.render(gui, mouseX, mouseY, partialTick);
     }
@@ -121,8 +121,8 @@ public class SkillCard extends UIContainer {
 
         this.addChild(new UIButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
     }
-    private ResourceLocation resolveIcon(){
-        var candidate = ResourceLocation.tryParse(skill.getIcon());
+    private Identifier resolveIcon(){
+        var candidate = Identifier.tryParse(skill.getIcon());
         return candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent() ?
                 candidate : Styles.DEFAULT_SKILL_ICON.texture();
     }

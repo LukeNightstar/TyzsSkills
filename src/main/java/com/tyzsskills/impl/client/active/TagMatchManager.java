@@ -3,8 +3,7 @@ package com.tyzsskills.impl.client.active;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -21,11 +20,9 @@ public class TagMatchManager {
     private static final Map<String, Predicate<BlockState>> BLOCK_CACHE = new ConcurrentHashMap<>();
 
     public static boolean isBlockInList(@NotNull CompoundTag params, @NotNull String listKey, @NotNull BlockState state){
-        if(params.contains(listKey, Tag.TAG_LIST)){
-            var blackList = params.getList(listKey, Tag.TAG_STRING);
-            for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchManager.doesBlockMatch(blackList.getString(i), state)) return true;
-            }
+        var blackList = params.getListOrEmpty(listKey);
+        for (int i = 0; i < blackList.size(); i++){
+            if(TagMatchManager.doesBlockMatch(blackList.getStringOr(i, ""), state)) return true;
         }
         return false;
     }
@@ -38,15 +35,15 @@ public class TagMatchManager {
 
     private static Predicate<BlockState> blockTest(@NotNull String entry){
         if (entry.startsWith("#")) {
-            var tagId = ResourceLocation.tryParse(entry.substring(1));
+            var tagId = Identifier.tryParse(entry.substring(1));
             if (tagId != null) {
                 var tag = TagKey.create(Registries.BLOCK, tagId);
                 return state -> state.is(tag);
             }
         } else {
-            var blockId = ResourceLocation.tryParse(entry);
+            var blockId = Identifier.tryParse(entry);
             if (blockId != null) {
-                var targetBlock = BuiltInRegistries.BLOCK.get(blockId);
+                var targetBlock = BuiltInRegistries.BLOCK.getValue(blockId);
                 return state -> state.is(targetBlock);
             }
         }
@@ -58,11 +55,9 @@ public class TagMatchManager {
     private static final Map<String, Predicate<EntityType<?>>> ENTITY_CACHE = new ConcurrentHashMap<>();
 
     public static boolean isEntityInList(@NotNull CompoundTag params, @NotNull String listKey, @NotNull EntityType<?> type){
-        if(params.contains(listKey, Tag.TAG_LIST)){
-            var blackList = params.getList(listKey, Tag.TAG_STRING);
-            for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchManager.doesEntityMatch(blackList.getString(i), type)) return true;
-            }
+        var blackList = params.getListOrEmpty(listKey);
+        for (int i = 0; i < blackList.size(); i++){
+            if(TagMatchManager.doesEntityMatch(blackList.getStringOr(i, ""), type)) return true;
         }
         return false;
     }
@@ -75,15 +70,15 @@ public class TagMatchManager {
 
     private static Predicate<EntityType<?>> entityTest(@NotNull String entry){
         if (entry.startsWith("#")) {
-            var tagId = ResourceLocation.tryParse(entry.substring(1));
+            var tagId = Identifier.tryParse(entry.substring(1));
             if (tagId != null) {
                 var tag = TagKey.create(Registries.ENTITY_TYPE, tagId);
-                return type -> type.is(tag);
+                return type -> BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).is(tag);
             }
         } else {
-            var entityId = ResourceLocation.tryParse(entry);
+            var entityId = Identifier.tryParse(entry);
             if (entityId != null) {
-                var targetEntity = BuiltInRegistries.ENTITY_TYPE.get(entityId);
+                var targetEntity = BuiltInRegistries.ENTITY_TYPE.getValue(entityId);
                 return type -> type.equals(targetEntity);
             }
         }
@@ -95,11 +90,9 @@ public class TagMatchManager {
     private static final Map<String, Predicate<ItemStack>> ITEM_CACHE = new ConcurrentHashMap<>();
 
     public static boolean isItemInList(@NotNull CompoundTag params, @NotNull String listKey, @NotNull ItemStack stack){
-        if(params.contains(listKey, Tag.TAG_LIST)){
-            var blackList = params.getList(listKey, Tag.TAG_STRING);
-            for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchManager.doesItemMatch(blackList.getString(i), stack)) return true;
-            }
+        var blackList = params.getListOrEmpty(listKey);
+        for (int i = 0; i < blackList.size(); i++){
+            if(TagMatchManager.doesItemMatch(blackList.getStringOr(i, ""), stack)) return true;
         }
         return false;
     }
@@ -112,15 +105,15 @@ public class TagMatchManager {
 
     private static Predicate<ItemStack> itemTest(@NotNull String entry){
         if (entry.startsWith("#")) {
-            var tagId = ResourceLocation.tryParse(entry.substring(1));
+            var tagId = Identifier.tryParse(entry.substring(1));
             if (tagId != null) {
                 var tag = TagKey.create(Registries.ITEM, tagId);
                 return stack -> stack.is(tag);
             }
         } else {
-            var itemId = ResourceLocation.tryParse(entry);
+            var itemId = Identifier.tryParse(entry);
             if (itemId != null) {
-                var targetItem = BuiltInRegistries.ITEM.get(itemId);
+                var targetItem = BuiltInRegistries.ITEM.getValue(itemId);
                 return stack -> stack.is(targetItem);
             }
         }

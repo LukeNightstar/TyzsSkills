@@ -48,11 +48,11 @@ public class TwistOfFateEffect extends SkillBehavior {
             CompoundTag nbt = blockEntity.saveWithoutMetadata(player.registryAccess());
 
             if (nbt.contains("LootTable")) {
-                var server = player.getServer();
+                var server = player.level().getServer();
                 if (server != null && !TagMatchManager.isBlockInList(skill.getSpecificParameters(), "container_blacklist", event.getLevel().getBlockState(pos))) {
 
                     PROCESSING_CHESTS.add(globalPos);
-                    server.tell(new TickTask(server.getTickCount() + 1, () -> {
+                    server.schedule(new TickTask(server.getTickCount() + 1, () -> {
                         try{
                             var openedEntity = player.level().getBlockEntity(pos);
                             if (!(openedEntity instanceof Container container)) return;

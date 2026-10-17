@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.commands;
 
+import net.minecraft.server.permissions.Permissions;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.payloads.ExportPayload;
@@ -13,7 +14,7 @@ public class DebugCommands {
     public static LiteralArgumentBuilder<CommandSourceStack> debug(){
         return Commands.literal("debug")
                 .then(export())
-                .then(errors().requires(src -> src.hasPermission(3)));
+                .then(errors().requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN)));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> export(){

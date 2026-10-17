@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class UIContainer extends UIElement {
 
     //Overrides
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTick) {
         for(var child : children){
             child.updatePosition(getRawX(), getRawY());
             child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded());
