@@ -91,7 +91,7 @@ Increase your level passively to unlock a variety of skills and customize your g
 [[dependencies.${mod_id}]]
 modId="kubejs"
 type="optional"
-versionRange="[21.1.0,)"
+versionRange="[26.1.2-8.0.0,)"
 ordering="AFTER"
 side="BOTH"
 
